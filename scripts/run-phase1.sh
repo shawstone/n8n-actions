@@ -14,6 +14,7 @@ exported_workflow="${run_root}/imported-workflow.json"
 credentials_json="${run_root}/credentials.json"
 
 mkdir -p "$data_dir"
+sudo chown --recursive 1000:1000 "$data_dir"
 
 cleanup() {
   local exit_code=$?
