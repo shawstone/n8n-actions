@@ -97,9 +97,10 @@ docker exec --user node "$CONTAINER_NAME" n8n export:workflow --id="$WORKFLOW_ID
 docker cp "${CONTAINER_NAME}:/tmp/imported-workflow.json" "$exported_workflow"
 
 jq -e --arg id "$WORKFLOW_ID" '
-  .id == $id and
-  .name == "n8n信息聚合器" and
-  (.nodes | length) == 87
+  (if type == "array" then .[0] else . end) as $workflow |
+  $workflow.id == $id and
+  $workflow.name == "n8n信息聚合器" and
+  ($workflow.nodes | length) == 87
 ' "$exported_workflow" >/dev/null
 echo "Import verification passed: workflow ID, name, and 87-node count all match."
 
