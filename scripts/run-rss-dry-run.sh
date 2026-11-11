@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 N8N_IMAGE="${N8N_IMAGE:-docker.n8n.io/n8nio/n8n:2.47.4}"
 CONTAINER_NAME="${CONTAINER_NAME:-n8n-rss-dry-run}"
+EXECUTION_CONTAINER_NAME="${EXECUTION_CONTAINER_NAME:-n8n-rss-dry-run-execute}"
 WORKFLOW_ID="${WORKFLOW_ID:-SDbEpCrT1vf0m3gr}"
 EXPECTED_WORKFLOW_SHA256="${EXPECTED_WORKFLOW_SHA256:-492A6C99A7AF6AC71D8AD45017DB4FF1D907881672D323DC7D521B17BB4F28EF}"
 
@@ -26,6 +27,7 @@ cleanup() {
     echo "::endgroup::"
     docker rm --force "$CONTAINER_NAME" >/dev/null 2>&1 || true
   fi
+  docker rm --force "$EXECUTION_CONTAINER_NAME" >/dev/null 2>&1 || true
   exit "$exit_code"
 }
 trap cleanup EXIT
@@ -163,9 +165,24 @@ echo "Importing the RSS dry-run workflow."
 docker cp "$dry_run_workflow" "${CONTAINER_NAME}:/tmp/dry-run-workflow.json"
 docker exec --user node "$CONTAINER_NAME" n8n import:workflow --input=/tmp/dry-run-workflow.json
 
+echo "Stopping the temporary n8n server before the isolated CLI execution."
+docker stop "$CONTAINER_NAME" >/dev/null
+
 echo "Executing the RSS dry-run workflow."
 set +e
-docker exec --user node "$CONTAINER_NAME" n8n execute --id "$WORKFLOW_ID" --rawOutput \
+docker run --rm \
+  --name "$EXECUTION_CONTAINER_NAME" \
+  --user node \
+  --env "N8N_ENCRYPTION_KEY=$encryption_key" \
+  --env "N8N_RUNNERS_TASK_TIMEOUT=300" \
+  --env "N8N_DIAGNOSTICS_ENABLED=false" \
+  --env "N8N_VERSION_NOTIFICATIONS_ENABLED=false" \
+  --env "N8N_PERSONALIZATION_ENABLED=false" \
+  --env "GENERIC_TIMEZONE=Asia/Shanghai" \
+  --env "TZ=Asia/Shanghai" \
+  --volume "${data_dir}:/home/node/.n8n" \
+  --entrypoint n8n \
+  "$N8N_IMAGE" execute --id "$WORKFLOW_ID" --rawOutput \
   > "$execution_json" 2> "$execution_log"
 execution_status=$?
 set -e
