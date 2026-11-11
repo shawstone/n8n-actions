@@ -13,20 +13,6 @@ from typing import Any
 FINAL_NODE = "分类排序"
 
 
-def load_execution_json(path: Path) -> Any:
-    raw = path.read_text(encoding="utf-8")
-    decoder = json.JSONDecoder()
-    for index, char in enumerate(raw):
-        if char != "{":
-            continue
-        try:
-            value, _ = decoder.raw_decode(raw[index:])
-            return value
-        except json.JSONDecodeError:
-            continue
-    raise ValueError("No JSON object found in n8n execution output")
-
-
 def find_run_data(value: Any) -> dict[str, Any] | None:
     if isinstance(value, dict):
         candidate = value.get("runData")
@@ -42,6 +28,21 @@ def find_run_data(value: Any) -> dict[str, Any] | None:
             if found is not None:
                 return found
     return None
+
+
+def load_execution_json(path: Path) -> Any:
+    raw = path.read_text(encoding="utf-8")
+    decoder = json.JSONDecoder()
+    for index, char in enumerate(raw):
+        if char != "{":
+            continue
+        try:
+            value, _ = decoder.raw_decode(raw[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict) and find_run_data(value) is not None:
+            return value
+    raise ValueError("No n8n execution JSON containing runData was found")
 
 
 def node_items(run_data: dict[str, Any], node_name: str) -> list[Any]:
