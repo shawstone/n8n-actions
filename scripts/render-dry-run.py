@@ -42,7 +42,7 @@ def load_execution_json(path: Path) -> Any:
             continue
         if isinstance(value, dict) and find_run_data(value) is not None:
             return value
-    raise ValueError("No n8n execution JSON containing runData was found")
+    raise ValueError(f"No n8n execution JSON containing runData was found in {path}")
 
 
 def node_items(run_data: dict[str, Any], node_name: str) -> list[Any]:
@@ -169,7 +169,13 @@ def main() -> int:
     summary_path = Path(sys.argv[2])
     report_path = Path(sys.argv[3])
 
-    execution = load_execution_json(execution_path)
+    try:
+        execution = load_execution_json(execution_path)
+    except ValueError:
+        fallback_path = execution_path.with_suffix(".log")
+        print(f"No JSON found in {execution_path}; trying {fallback_path}", file=sys.stderr)
+        execution = load_execution_json(fallback_path)
+
     run_data = find_run_data(execution)
     if run_data is None:
         print("n8n execution JSON did not contain runData", file=sys.stderr)
