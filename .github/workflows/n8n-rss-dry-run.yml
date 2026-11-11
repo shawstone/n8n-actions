@@ -1,4 +1,4 @@
-name: n8n RSS dry run
+name: n8n RSS report
 
 on:
   workflow_dispatch:
@@ -10,15 +10,20 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: n8n-rss-dry-run
   cancel-in-progress: false
 
 jobs:
-  dry-run:
+  report:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     env:
       N8N_IMAGE: docker.n8n.io/n8nio/n8n:2.47.4
@@ -33,7 +38,27 @@ jobs:
       - name: Run public RSS and DeepSeek dry run
         run: bash scripts/run-rss-dry-run.sh
 
-      - name: Upload dry-run preview
+      - name: Prepare GitHub Pages files
+        run: |
+          mkdir -p site
+          cp dry-run/index.html site/index.html
+          touch site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Upload downloadable dry-run files
         if: always()
         uses: actions/upload-artifact@v4
         with:
