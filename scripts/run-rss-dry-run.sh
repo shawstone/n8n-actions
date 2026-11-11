@@ -87,7 +87,7 @@ jq '
       { "node": "Limit test items", "type": "main", "index": 0 }
     ]
   | .connections["Limit test items"] = {
-      "main": [[{ "node": "24h内5", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Basic LLM Chain7", "type": "main", "index": 0 }]]
     }
   | .connections["分类排序"].main[0] = []
   | .nodes += [
@@ -116,6 +116,7 @@ jq '
 jq -e '
   (.connections["Execute Workflow Trigger"].main[0] | length) == 3
   and (.connections["Schedule Trigger"].main[0] | length) == 0
+  and (.connections["Limit test items"].main[0][0].node) == "Basic LLM Chain7"
   and (.connections["分类排序"].main[0] | length) == 0
   and ([.nodes[] | select(.type == "n8n-nodes-feishu-lite.feishuNode")] | length) == 0
   and ([.nodes[] | select(.name == "Limit test items")] | length) == 1
