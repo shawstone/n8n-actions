@@ -1,0 +1,47 @@
+name: n8n Phase 1
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute_workflow:
+        description: Execute the full original workflow after a successful import
+        required: true
+        type: boolean
+        default: false
+  push:
+    branches:
+      - main
+    paths:
+      - .phase1/run-request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: n8n-phase1
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      N8N_IMAGE: docker.n8n.io/n8nio/n8n:2.47.4
+      WORKFLOW_ID: SDbEpCrT1vf0m3gr
+      EXPECTED_WORKFLOW_SHA256: 492A6C99A7AF6AC71D8AD45017DB4FF1D907881672D323DC7D521B17BB4F28EF
+      EXECUTE_WORKFLOW: ${{ inputs.execute_workflow || 'false' }}
+      N8N_CREDENTIALS_JSON: ${{ secrets.N8N_CREDENTIALS_JSON }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Check runner tools
+        run: |
+          docker version
+          jq --version
+          sha256sum --version
+
+      - name: Start n8n and verify import
+        run: bash scripts/run-phase1.sh
