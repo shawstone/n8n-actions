@@ -172,10 +172,20 @@ set -e
 
 if [[ "$execution_status" -ne 0 ]]; then
   echo "n8n workflow execution failed with exit code $execution_status." >&2
-  echo "::group::n8n execution log (tail)"
-  tail -n 160 "$execution_log" || true
-  echo "::endgroup::"
+  cp "$execution_json" "$artifact_dir/execution.json"
   cp "$execution_log" "$artifact_dir/execution.log"
+
+  echo "::group::n8n execution diagnostics"
+  if jq -e . "$execution_json" >/dev/null 2>&1; then
+    jq -r '.. | objects | .message? // empty | select(type == "string")' "$execution_json" | head -n 80 || true
+  fi
+  if [[ -s "$execution_json" ]]; then
+    tail -n 80 "$execution_json" || true
+  fi
+  if [[ -s "$execution_log" ]]; then
+    tail -n 80 "$execution_log" || true
+  fi
+  echo "::endgroup::"
   exit "$execution_status"
 fi
 
