@@ -34,18 +34,20 @@ trap cleanup EXIT
 
 wait_for_n8n() {
   local attempt
+  local logs
   for attempt in $(seq 1 120); do
-    if curl --fail --silent --show-error http://127.0.0.1:5678/healthz >/dev/null; then
-      echo "n8n is ready after $((attempt * 2)) seconds."
+    logs="$(docker logs "$CONTAINER_NAME" 2>&1 || true)"
+    if grep -Fq "Editor is now accessible via:" <<< "$logs"; then
+      echo "n8n startup and database migrations completed after $((attempt * 2)) seconds."
       return 0
     fi
     if ! docker inspect --format '{{.State.Running}}' "$CONTAINER_NAME" 2>/dev/null | grep -q true; then
-      echo "n8n container stopped before becoming healthy." >&2
+      echo "n8n container stopped before startup completed." >&2
       return 1
     fi
     sleep 2
   done
-  echo "n8n did not become healthy within 240 seconds." >&2
+  echo "n8n did not finish startup within 240 seconds." >&2
   return 1
 }
 
