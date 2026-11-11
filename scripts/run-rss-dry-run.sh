@@ -49,25 +49,6 @@ wait_for_n8n() {
   return 1
 }
 
-wait_for_community_package() {
-  local attempt
-  local logs
-  for attempt in $(seq 1 120); do
-    logs="$(docker logs "$CONTAINER_NAME" 2>&1 || true)"
-    if grep -Fq "Failed to install community package" <<< "$logs"; then
-      grep -F "Failed to install community package" <<< "$logs" >&2
-      return 1
-    fi
-    if grep -Fq "Installed community package" <<< "$logs"; then
-      echo "Feishu community package installation completed after $((attempt * 2)) seconds."
-      return 0
-    fi
-    sleep 2
-  done
-  echo "Feishu community package did not finish installing within 240 seconds." >&2
-  return 1
-}
-
 if [[ -z "${DEEPSEEK_API_KEY:-}" ]]; then
   echo "The DEEPSEEK_API_KEY GitHub Actions secret is missing." >&2
   exit 2
@@ -85,6 +66,15 @@ echo "Creating the RSS-only dry-run copy; the committed original remains unchang
 jq '
   .name = "n8n信息聚合器 [RSS dry run]"
   | .active = false
+  | .nodes |= map(
+      if .type == "n8n-nodes-feishu-lite.feishuNode" then
+        .type = "n8n-nodes-base.noOp"
+        | .typeVersion = 1
+        | .parameters = {}
+        | del(.credentials)
+      else .
+      end
+    )
   | .connections["Schedule Trigger"].main[0] = []
   | .connections["Execute Workflow Trigger"] = {
       "main": [[
@@ -127,11 +117,12 @@ jq -e '
   (.connections["Execute Workflow Trigger"].main[0] | length) == 3
   and (.connections["Schedule Trigger"].main[0] | length) == 0
   and (.connections["分类排序"].main[0] | length) == 0
+  and ([.nodes[] | select(.type == "n8n-nodes-feishu-lite.feishuNode")] | length) == 0
   and ([.nodes[] | select(.name == "Limit test items")] | length) == 1
 ' "$dry_run_workflow" >/dev/null
 
 cp "$dry_run_workflow" "$artifact_dir/dry-run-workflow.json"
-echo "Dry-run workflow checks passed: CLI trigger, 3 RSS feeds, 5-item cap, no Feishu connection."
+echo "Dry-run workflow checks passed: CLI trigger, 3 RSS feeds, 5-item cap, Feishu disabled."
 
 jq -n --arg apiKey "$DEEPSEEK_API_KEY" '[{
   "id": "yt8fyLgfmvOBHB4v",
@@ -143,7 +134,6 @@ jq -n --arg apiKey "$DEEPSEEK_API_KEY" '[{
   }
 }]' > "$credentials_json"
 
-community_packages='[{"name":"@songlipeng2003/n8n-nodes-feishu-lite","version":"0.4.7"}]'
 encryption_key="$(openssl rand -hex 32)"
 owner_password_hash='$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'
 
@@ -157,8 +147,6 @@ docker run --detach \
   --env "N8N_INSTANCE_OWNER_FIRST_NAME=Phase1" \
   --env "N8N_INSTANCE_OWNER_LAST_NAME=Owner" \
   --env "N8N_INSTANCE_OWNER_PASSWORD_HASH=$owner_password_hash" \
-  --env "N8N_COMMUNITY_PACKAGES_MANAGED_BY_ENV=true" \
-  --env "N8N_COMMUNITY_PACKAGES=$community_packages" \
   --env "N8N_UNVERIFIED_PACKAGES_ENABLED=true" \
   --env "N8N_RUNNERS_TASK_TIMEOUT=300" \
   --env "N8N_DIAGNOSTICS_ENABLED=false" \
@@ -171,7 +159,6 @@ docker run --detach \
   "$N8N_IMAGE" >/dev/null
 
 wait_for_n8n
-wait_for_community_package
 
 echo "Importing the test-only DeepSeek credential."
 docker cp "$credentials_json" "${CONTAINER_NAME}:/tmp/credentials.json"
