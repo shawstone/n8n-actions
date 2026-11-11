@@ -85,9 +85,14 @@ echo "Creating the RSS-only dry-run copy; the committed original remains unchang
 jq '
   .name = "n8n信息聚合器 [RSS dry run]"
   | .active = false
-  | .connections["Schedule Trigger"].main[0] |= map(
-      select(.node == "Techcrunch" or .node == "Theverge" or .node == "纽约时报")
-    )
+  | .connections["Schedule Trigger"].main[0] = []
+  | .connections["Execute Workflow Trigger"] = {
+      "main": [[
+        { "node": "Techcrunch", "type": "main", "index": 0 },
+        { "node": "Theverge", "type": "main", "index": 0 },
+        { "node": "纽约时报", "type": "main", "index": 0 }
+      ]]
+    }
   | .connections["Merge6"].main[0] = [
       { "node": "Limit test items", "type": "main", "index": 0 }
     ]
@@ -95,27 +100,38 @@ jq '
       "main": [[{ "node": "24h内5", "type": "main", "index": 0 }]]
     }
   | .connections["分类排序"].main[0] = []
-  | .nodes += [{
-      "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "return $input.all().slice(0, 5);"
+  | .nodes += [
+      {
+        "parameters": { "inputSource": "passthrough" },
+        "id": "c894e836-abf2-43d8-aa6d-218a778fa414",
+        "name": "Execute Workflow Trigger",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [-300, 1180]
       },
-      "id": "91eb0f8e-6daf-4c03-8bf9-3f8372851b6d",
-      "name": "Limit test items",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [820, 1180]
-    }]
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "return $input.all().slice(0, 5);"
+        },
+        "id": "91eb0f8e-6daf-4c03-8bf9-3f8372851b6d",
+        "name": "Limit test items",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [820, 1180]
+      }
+    ]
 ' "$original_workflow" > "$dry_run_workflow"
 
 jq -e '
-  (.connections["Schedule Trigger"].main[0] | length) == 3
+  (.connections["Execute Workflow Trigger"].main[0] | length) == 3
+  and (.connections["Schedule Trigger"].main[0] | length) == 0
   and (.connections["分类排序"].main[0] | length) == 0
   and ([.nodes[] | select(.name == "Limit test items")] | length) == 1
 ' "$dry_run_workflow" >/dev/null
 
 cp "$dry_run_workflow" "$artifact_dir/dry-run-workflow.json"
-echo "Dry-run workflow checks passed: 3 RSS feeds, 5-item cap, no Feishu connection."
+echo "Dry-run workflow checks passed: CLI trigger, 3 RSS feeds, 5-item cap, no Feishu connection."
 
 jq -n --arg apiKey "$DEEPSEEK_API_KEY" '[{
   "id": "yt8fyLgfmvOBHB4v",
