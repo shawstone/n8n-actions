@@ -2,6 +2,8 @@ name: n8n RSS report
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
@@ -35,7 +37,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
 
-      - name: Run public RSS and DeepSeek dry run
+      - name: Run public RSS and DeepSeek report
         run: bash scripts/run-rss-dry-run.sh
 
       - name: Prepare GitHub Pages files
@@ -58,11 +60,44 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Upload downloadable dry-run files
+      - name: Archive report to Cloudflare R2
+        if: success()
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          if [ -z "${R2_ACCESS_KEY_ID:-}" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$R2_BUCKET" ]; then
+            echo "::warning::R2 secrets are not configured; skipping archive."
+            exit 0
+          fi
+
+          endpoint="https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          report_day="$(TZ=Asia/Shanghai date +%F)"
+          report_time="$(TZ=Asia/Shanghai date +%H-%M-%S)"
+          archive_prefix="s3://${R2_BUCKET}/reports/${report_day}/${report_time}"
+
+          aws s3 cp dry-run/index.html "${archive_prefix}/index.html" \
+            --endpoint-url "$endpoint" \
+            --content-type "text/html; charset=utf-8"
+          aws s3 cp dry-run/report.json "${archive_prefix}/report.json" \
+            --endpoint-url "$endpoint" \
+            --content-type "application/json; charset=utf-8"
+          aws s3 cp dry-run/index.html "s3://${R2_BUCKET}/reports/latest/index.html" \
+            --endpoint-url "$endpoint" \
+            --content-type "text/html; charset=utf-8"
+          aws s3 cp dry-run/report.json "s3://${R2_BUCKET}/reports/latest/report.json" \
+            --endpoint-url "$endpoint" \
+            --content-type "application/json; charset=utf-8"
+
+      - name: Upload downloadable report files
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: n8n-rss-dry-run
+          name: n8n-rss-report
           path: dry-run/
           if-no-files-found: warn
           retention-days: 3
