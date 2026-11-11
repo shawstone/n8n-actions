@@ -177,7 +177,7 @@ docker run --rm \
   --name "$EXECUTION_CONTAINER_NAME" \
   --user node \
   --env "N8N_ENCRYPTION_KEY=$encryption_key" \
-  --env "N8N_LOG_LEVEL=silent" \
+  --env "N8N_LOG_LEVEL=info" \
   --env "N8N_RUNNERS_TASK_TIMEOUT=300" \
   --env "N8N_DIAGNOSTICS_ENABLED=false" \
   --env "N8N_VERSION_NOTIFICATIONS_ENABLED=false" \
