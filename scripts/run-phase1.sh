@@ -48,6 +48,29 @@ wait_for_n8n() {
   return 1
 }
 
+wait_for_community_package() {
+  local attempt
+  local logs
+  for attempt in $(seq 1 120); do
+    logs="$(docker logs "$CONTAINER_NAME" 2>&1 || true)"
+
+    if grep -Fq "Failed to install community package" <<< "$logs"; then
+      grep -F "Failed to install community package" <<< "$logs" >&2
+      return 1
+    fi
+
+    if grep -Fq "Installed community package" <<< "$logs"; then
+      echo "Feishu community package installation completed after $((attempt * 2)) seconds."
+      return 0
+    fi
+
+    sleep 2
+  done
+
+  echo "Feishu community package did not finish installing within 240 seconds." >&2
+  return 1
+}
+
 echo "Restoring the original workflow JSON from the compressed repository copy."
 base64 --decode n8n/workflow.json.gz.b64 | gzip --decompress > "$workflow_json"
 
@@ -76,7 +99,8 @@ docker run --detach \
   --env "N8N_INSTANCE_OWNER_PASSWORD_HASH=$owner_password_hash" \
   --env "N8N_COMMUNITY_PACKAGES_MANAGED_BY_ENV=true" \
   --env "N8N_COMMUNITY_PACKAGES=$community_packages" \
-  --env "N8N_RUNNERS_ENABLED=true" \
+  --env "N8N_UNVERIFIED_PACKAGES_ENABLED=true" \
+  --env "N8N_RUNNERS_TASK_TIMEOUT=300" \
   --env "N8N_DIAGNOSTICS_ENABLED=false" \
   --env "N8N_VERSION_NOTIFICATIONS_ENABLED=false" \
   --env "N8N_PERSONALIZATION_ENABLED=false" \
@@ -87,6 +111,7 @@ docker run --detach \
   "$N8N_IMAGE" >/dev/null
 
 wait_for_n8n
+wait_for_community_package
 
 echo "Importing the original workflow."
 docker cp "$workflow_json" "${CONTAINER_NAME}:/tmp/workflow.json"
