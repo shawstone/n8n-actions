@@ -70,15 +70,16 @@ wait_for_n8n() {
 wait_for_community_package() {
   local attempt
   local logs
+  local package_manifest='/home/node/.n8n/nodes/node_modules/@songlipeng2003/n8n-nodes-feishu-lite/package.json'
   for attempt in $(seq 1 120); do
+    if docker exec --user node "$CONTAINER_NAME" test -f "$package_manifest"; then
+      echo "Feishu community package is present after $((attempt * 2)) seconds."
+      return 0
+    fi
     logs="$(docker logs "$CONTAINER_NAME" 2>&1 || true)"
     if grep -Fq "Failed to install community package" <<<"$logs"; then
       grep -F "Failed to install community package" <<<"$logs" >&2
       return 1
-    fi
-    if grep -Fq "Installed community package" <<<"$logs"; then
-      echo "Feishu community package is ready after $((attempt * 2)) seconds."
-      return 0
     fi
     sleep 2
   done
