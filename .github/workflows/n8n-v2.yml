@@ -17,6 +17,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: n8n-v2-${{ github.ref }}
@@ -27,6 +29,9 @@ jobs:
     if: github.event_name != 'schedule' || vars.PUBLISH_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     env:
       MODE: ${{ github.event_name == 'schedule' && 'publish' || inputs.mode }}
@@ -65,11 +70,66 @@ jobs:
           path: ${{ env.STATE_DIR }}
           key: n8n-state-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
+      - name: Render HTML report
+        if: always() && hashFiles('artifacts/n8n-v2/run-summary.json') != ''
+        run: |
+          python3 scripts/render_report.py \
+            --summary artifacts/n8n-v2/run-summary.json \
+            --output-dir site
+
       - name: Upload summary
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: n8n-v2-summary-${{ github.run_id }}
-          path: artifacts/n8n-v2/
+          path: |
+            artifacts/n8n-v2/
+            site/
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Configure GitHub Pages
+        if: env.MODE == 'publish'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload GitHub Pages artifact
+        if: env.MODE == 'publish'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy GitHub Pages
+        if: env.MODE == 'publish'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Archive report to Cloudflare R2
+        if: env.MODE == 'publish'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$R2_BUCKET" ]; then
+            echo "::warning::R2 secrets are not configured; skipping archive."
+            exit 0
+          fi
+
+          endpoint="https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          report_day="$(TZ=Asia/Shanghai date +%F)"
+          report_time="$(TZ=Asia/Shanghai date +%H-%M-%S)"
+          archive_prefix="s3://${R2_BUCKET}/n8n-v2/${report_day}/${report_time}"
+
+          for filename in index.html report.json; do
+            aws s3 cp "site/${filename}" "${archive_prefix}/${filename}" \
+              --endpoint-url "$endpoint" \
+              --content-type "$([ "$filename" = index.html ] && echo 'text/html; charset=utf-8' || echo 'application/json; charset=utf-8')"
+            aws s3 cp "site/${filename}" "s3://${R2_BUCKET}/n8n-v2/latest/${filename}" \
+              --endpoint-url "$endpoint" \
+              --content-type "$([ "$filename" = index.html ] && echo 'text/html; charset=utf-8' || echo 'application/json; charset=utf-8')"
+          done
