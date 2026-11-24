@@ -2,6 +2,12 @@ name: Feishu Bitable field check
 
 on:
   workflow_dispatch:
+    inputs:
+      write_test:
+        description: "Write one test record after reading the fields"
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -29,6 +35,16 @@ jobs:
             --app-token "$FEISHU_BITABLE_APP_TOKEN" \
             --table-id "$FEISHU_BITABLE_TABLE_ID" \
             --output artifacts/feishu/bitable-fields.json
+
+      - name: Write one Feishu Bitable test record
+        if: inputs.write_test
+        run: |
+          python3 scripts/test_feishu_bitable_write.py \
+            --app-id "$FEISHU_APP_ID" \
+            --app-secret "$FEISHU_APP_SECRET" \
+            --app-token "$FEISHU_BITABLE_APP_TOKEN" \
+            --table-id "$FEISHU_BITABLE_TABLE_ID" \
+            --output artifacts/feishu/bitable-write-test.json
 
       - name: Upload field definitions
         if: always()
