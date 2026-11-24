@@ -82,10 +82,10 @@ dry-run 通过后，回到
 | 正式发布必需 | 从哪里获得 |
 |---|---|
 | `FEISHU_WEBHOOK_URL` | 飞书群机器人 Webhook 的完整 URL |
-| `FEISHU_APP_ID` | 飞书开放平台应用的 App ID |
-| `FEISHU_APP_SECRET` | 飞书开放平台应用的 App Secret |
-| `FEISHU_BITABLE_APP_TOKEN` | 待观察多维表格的 App Token |
-| `FEISHU_BITABLE_TABLE_ID` | 待观察多维表格的 Table ID |
+| `FEISHU_APP_ID` | 当前版本暂不使用，可为以后多维表格保留 |
+| `FEISHU_APP_SECRET` | 当前版本暂不使用，可为以后多维表格保留 |
+| `FEISHU_BITABLE_APP_TOKEN` | 当前版本暂不使用，可为以后多维表格保留 |
+| `FEISHU_BITABLE_TABLE_ID` | 当前版本暂不使用，可为以后多维表格保留 |
 
 然后进入 **Actions → n8n information aggregator v2 → Run workflow**，
 选择 `main` 和 `publish`。确认飞书实际收到内容，并且多维表格可以写入。
