@@ -100,11 +100,17 @@ def patch_sources(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
 
 
 def configure_optional_source(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
-    extra_feeds = sources.get("extra_feeds", [])
+    extra_feeds = [
+        feed
+        for feed in sources.get("extra_feeds", [])
+        if feed.get("url") or feed.get("source")
+    ]
     if extra_feeds:
         for feed in extra_feeds:
             if not str(feed.get("url", "")).startswith(("http://", "https://")):
                 raise ValueError("Every extra feed needs an HTTP(S) URL")
+            if not feed.get("source"):
+                raise ValueError("Every extra feed needs a source label")
 
         input_node_name = "Extra Feed Input"
         workflow["nodes"].append(
@@ -251,7 +257,14 @@ def add_dry_run_limit(workflow: dict[str, Any]) -> None:
 
 
 def patch_prompts_and_tags(workflow: dict[str, Any], config_dir: Path) -> None:
-    rules = load_json(config_dir / "tag-rules.json")
+    rules = [
+        rule
+        for rule in load_json(config_dir / "tag-rules.json")
+        if rule.get("label") or rule.get("pattern")
+    ]
+    for rule in rules:
+        if not rule.get("label") or not rule.get("pattern"):
+            raise ValueError("Every tag rule needs both label and pattern")
     node_by_name(workflow, "本地标签筛选")["parameters"]["jsCode"] = render_tag_rules(
         rules, only_filter=True
     )

@@ -26,5 +26,9 @@
   {
     "label": "英语",
     "pattern": "英语|English|英文|雅思|托福|口语|翻译|双语"
+  },
+  {
+    "label": "",
+    "pattern": ""
   }
 ]

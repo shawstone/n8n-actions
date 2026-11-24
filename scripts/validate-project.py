@@ -86,6 +86,8 @@ def validate_config(template: dict[str, Any]) -> None:
         if name not in names:
             raise ValueError(f"Configured RSS node not found: {name}")
     for feed in sources["extra_feeds"]:
+        if not feed.get("url") and not feed.get("source"):
+            continue
         if not str(feed.get("url", "")).startswith(("http://", "https://")):
             raise ValueError("Every extra feed needs an HTTP(S) URL")
         if not feed.get("source"):
@@ -94,11 +96,14 @@ def validate_config(template: dict[str, Any]) -> None:
         raise ValueError("At least one YouTube channel ID is required")
 
     rules = load_json(ROOT / "config" / "tag-rules.json")
-    labels = [rule["label"] for rule in rules]
+    filled_rules = [
+        rule for rule in rules if rule.get("label") or rule.get("pattern")
+    ]
+    labels = [rule["label"] for rule in filled_rules]
     if len(labels) != len(set(labels)):
         raise ValueError("Tag labels must be unique")
-    for rule in rules:
-        if not rule["pattern"]:
+    for rule in filled_rules:
+        if not rule.get("label") or not rule.get("pattern"):
             raise ValueError(f"Empty tag pattern for {rule['label']}")
 
     for prompt_name in ("ai-classify.txt", "language-analysis.txt"):
