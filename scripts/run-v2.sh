@@ -67,30 +67,7 @@ wait_for_n8n() {
   return 1
 }
 
-wait_for_community_package() {
-  local attempt
-  local logs
-  local package_manifest='/home/node/.n8n/nodes/node_modules/@songlipeng2003/n8n-nodes-feishu-lite/package.json'
-  for attempt in $(seq 1 120); do
-    if docker exec --user node "$CONTAINER_NAME" test -f "$package_manifest"; then
-      echo "Feishu community package is present after $((attempt * 2)) seconds."
-      return 0
-    fi
-    logs="$(docker logs "$CONTAINER_NAME" 2>&1 || true)"
-    if grep -Fq "Failed to install community package" <<<"$logs"; then
-      grep -F "Failed to install community package" <<<"$logs" >&2
-      return 1
-    fi
-    sleep 2
-  done
-  echo "Feishu community package did not finish installing within 240 seconds." >&2
-  return 1
-}
-
 start_n8n() {
-  local community_packages
-  community_packages='[{"name":"@songlipeng2003/n8n-nodes-feishu-lite","version":"0.4.7"}]'
-
   docker run --detach \
     --name "$CONTAINER_NAME" \
     --publish 5678:5678 \
@@ -100,9 +77,6 @@ start_n8n() {
     --env "N8N_INSTANCE_OWNER_FIRST_NAME=V2" \
     --env "N8N_INSTANCE_OWNER_LAST_NAME=Owner" \
     --env "N8N_INSTANCE_OWNER_PASSWORD_HASH=${N8N_OWNER_PASSWORD_HASH}" \
-    --env "N8N_COMMUNITY_PACKAGES_MANAGED_BY_ENV=true" \
-    --env "N8N_COMMUNITY_PACKAGES=${community_packages}" \
-    --env "N8N_UNVERIFIED_PACKAGES_ENABLED=true" \
     --env "N8N_RUNNERS_TASK_TIMEOUT=600" \
     --env "N8N_DIAGNOSTICS_ENABLED=false" \
     --env "N8N_VERSION_NOTIFICATIONS_ENABLED=false" \
@@ -115,7 +89,6 @@ start_n8n() {
     "$N8N_IMAGE" >/dev/null
 
   wait_for_n8n
-  wait_for_community_package
 }
 
 invoke_workflow() {
@@ -193,8 +166,6 @@ python3 scripts/prepare_workflow.py \
 
 jq -n \
   --arg deepseek "$DEEPSEEK_API_KEY" \
-  --arg feishu_app_id "${FEISHU_APP_ID:-}" \
-  --arg feishu_app_secret "${FEISHU_APP_SECRET:-}" \
   '[
     {
       "id": "xvaefodMzAZCsD3v",
@@ -205,17 +176,7 @@ jq -n \
         "url": "https://api.deepseek.com"
       }
     }
-  ] + if ($feishu_app_id | length) > 0 and ($feishu_app_secret | length) > 0 then [
-    {
-      "id": "v2FeishuCred0001",
-      "name": "Feishu Credentials account",
-      "type": "feishuCredentialsApi",
-      "data": {
-        "appId": $feishu_app_id,
-        "appSecret": $feishu_app_secret
-      }
-    }
-  ] else [] end' >"$CREDENTIALS_JSON"
+  ]' >"$CREDENTIALS_JSON"
 
 docker cp "$CREDENTIALS_JSON" "${CONTAINER_NAME}:/tmp/runtime-credentials.json"
 docker cp "$RUNTIME_WORKFLOW" "${CONTAINER_NAME}:/tmp/runtime-workflow.json"
