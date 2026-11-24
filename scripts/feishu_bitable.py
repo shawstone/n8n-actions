@@ -125,11 +125,25 @@ def build_records(
     pending_items: list[dict[str, Any]],
     fields: list[BitableField],
     field_map: dict[str, str],
+    single_text_field: str | None = None,
+    text_template: str | None = None,
 ) -> list[dict[str, Any]]:
     by_name = {field.name: field for field in fields}
     records: list[dict[str, Any]] = []
 
     for item in pending_items:
+        if single_text_field and text_template and single_text_field in by_name:
+            text = text_template.format(
+                title=item.get("title") or "",
+                link=item.get("link") or "",
+                source=item.get("source") or "",
+                labels=item.get("labels") or "",
+                date=item.get("date") or "",
+            ).strip()
+            if text:
+                records.append({"fields": {single_text_field: text}})
+            continue
+
         values: dict[str, Any] = {}
         title = str(item.get("title") or "")
         for source_key, target_name in field_map.items():

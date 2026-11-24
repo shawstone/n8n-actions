@@ -37,6 +37,8 @@ def main() -> int:
             summary.get("pending_items") or [],
             fields,
             config["field_map"],
+            config.get("single_text_field"),
+            config.get("text_template"),
         )
         result = {
             "enabled": True,

@@ -1,5 +1,7 @@
 {
   "enabled": true,
+  "single_text_field": "文本",
+  "text_template": "标题：{title}\n来源：{source}\n日期：{date}\n标签：{labels}\n链接：{link}",
   "field_map": {
     "title": "标题",
     "link": "链接",
