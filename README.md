@@ -204,6 +204,44 @@ Actions 时会自动读取，不需要重新导入 n8n。
 
 修改并提交后，下一次 Actions 运行会自动使用新提示词。
 
+## 飞书多维表格
+
+“待观察”数据不再经过社区节点，而是由 GitHub Actions 使用飞书官方 API
+写入。当前多维表格只有一列 `文本`，每条记录会整理成：
+
+```text
+标题：...
+来源：...
+日期：...
+标签：...
+链接：...
+```
+
+字段映射在 `config/feishu-bitable.json`。以后多维表格增加独立字段后，可以
+把 `single_text_field` 删除，改为使用 `field_map` 写入多列。
+
+可以先运行 **Feishu Bitable field check**，勾选 `write_test=true` 写入一条
+带“测试记录”字样的数据，验证应用权限和表格结构。
+
+## GitHub Pages 与 R2
+
+`publish` 成功后会自动生成并部署网页：
+
+<https://shawstone.github.io/n8n-actions/>
+
+`dry-run` 只生成页面文件放进 Actions Artifact，不会覆盖线上页面。
+
+如需同时备份到 Cloudflare R2，添加以下 Secrets；未配置时会自动跳过：
+
+| R2 Secret | 用途 |
+|---|---|
+| `R2_ACCESS_KEY_ID` | R2 Access Key ID |
+| `R2_SECRET_ACCESS_KEY` | R2 Secret Access Key |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+| `R2_BUCKET` | 存储桶名称 |
+
+备份路径为 `n8n-v2/latest/` 和按北京时间分目录的历史快照。
+
 ## 常见问题
 
 `Required GitHub Actions secret is missing`
