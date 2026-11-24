@@ -1,0 +1,76 @@
+{
+  "name": "v2 Data Table bootstrap",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "4928eb7a-e21f-4caa-a9c9-cb44c22af876",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "已推送记录",
+        "columns": {
+          "column": [
+            {
+              "name": "link",
+              "type": "string"
+            },
+            {
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "name": "pushed_at",
+              "type": "date"
+            }
+          ]
+        },
+        "options": {
+          "createIfNotExists": true
+        }
+      },
+      "id": "b0ad2d43-81e7-4ee5-b784-7f57072cb2f8",
+      "name": "确保已推送记录表",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.10,
+      "position": [
+        260,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "确保已推送记录表",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f60b79ec-b7e8-4a11-b0f3-d5ff036405d1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "v2DataTableBoot1",
+  "tags": []
+}

@@ -1,0 +1,2539 @@
+{
+  "name": "n8n信息聚合器 v2",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "19337e34-e5f5-47ef-83b9-da73b56efee4",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1024,
+        896
+      ],
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.afp.com/en/actus/afp_communique/all/feed",
+        "options": {}
+      },
+      "id": "0b1025ba-2b0e-4f90-b5b6-845cb34b4ad1",
+      "name": "afp 法新社",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        224
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "afp法新社",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9085ef3c-72d2-42e8-a828-d07e91c9609f",
+      "name": "Edit Fields23",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        224
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "972626e6-e026-4505-9106-693250946cca",
+      "name": "Merge6",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        160,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.36kr.com/feed",
+        "options": {}
+      },
+      "id": "d2fb5f58-a2d3-4193-a4e5-d9a9fe914c3a",
+      "name": "36kr 36氪",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        416
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "36氪",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1f965c56-8584-4382-91e3-cc8ac260dfbc",
+      "name": "Edit Fields21",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        416
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4fc1108b-d2db-4729-a51e-256dcc5a66f3",
+      "name": "Merge11",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        384,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://plink.anyfeeder.com/weixin/thepapernews",
+        "options": {}
+      },
+      "id": "b81064fe-9bf8-4c75-8da4-c4ad3a875d71",
+      "name": "thepaper 澎湃新闻",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        608
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "澎湃新闻",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d8f9fd16-4f71-49c0-b26d-2f8a88342f4a",
+      "name": "Edit Fields20",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        608
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "945f169d-832f-48cc-82f0-7afb9b2b3271",
+      "name": "Merge12",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        608,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://plink.anyfeeder.com/newscn/whxw",
+        "options": {}
+      },
+      "id": "8773b4d2-1c3c-4db4-88c8-68e33973bead",
+      "name": "newscn 新华社",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        800
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "新华社",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9df5d5f8-df03-443f-8790-14eb055d2a81",
+      "name": "Edit Fields19",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        800
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1fbbb2ef-d423-440c-b57e-e740e0e6753d",
+      "name": "Merge13",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        832,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://plink.anyfeeder.com/jiemian/news",
+        "options": {}
+      },
+      "id": "9d02b9af-aff5-40e5-b7fb-b3807fd9a40d",
+      "name": "jiemian 界面新闻",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        992
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "界面新闻",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "77953003-ffa3-4be8-857e-4eca42d08631",
+      "name": "Edit Fields17",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        992
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4c20042c-73e5-4834-a466-dd3d82846610",
+      "name": "Merge14",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1056,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://plink.anyfeeder.com/zaobao/realtime/china",
+        "options": {}
+      },
+      "id": "c5fa3c69-05ed-4481-9f27-5a9b66b44201",
+      "name": "zaobao 联合早报中港台",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        1184
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "联合早报（中港台）",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ae4897c-8af6-4470-9fe5-108f2255225f",
+      "name": "Edit Fields16",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        1184
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "82b510e0-0871-4a34-adc7-043c94b17a06",
+      "name": "Merge15",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1280,
+        800
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://www.theguardian.com/international/rss",
+        "options": {}
+      },
+      "id": "d0bec74a-20de-44d6-80af-8d1461632c1e",
+      "name": "The Guardian 卫报",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        1376
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "卫报",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d3e840c-5778-4ecc-9efc-2771e925f568",
+      "name": "Edit Fields15",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        1376
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "bba7a6f6-4fa6-40fc-be5f-dbc867012507",
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1504,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=when:24h+site:reuters.com&ceid=US:en&hl=en-US&gl=US",
+        "options": {}
+      },
+      "id": "133d8f9f-6142-4df8-a600-8a1da8735080",
+      "name": "Reuters路透社",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        1568
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ String($json.contentSnippet || '').replace(/\\s+/g,' ').trim().replace(/\\s*Reuters$/,'') === String($json.title || '').replace(/\\s+/g,' ').trim().replace(/\\s*- Reuters$/,'') ? \"\" : $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "路透社",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3b7198a-9629-4e93-83e4-8562939ec447",
+      "name": "Edit Fields25",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        1568
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/spotlight/artificial-intelligence/rss.xml",
+        "options": {}
+      },
+      "id": "84a1f1d2-acc0-4eed-ba23-43dbebe7b0e6",
+      "name": "纽约时报",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        1760
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "纽约时报",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3369f499-c001-4b7a-ad83-968ec804d247",
+      "name": "Edit Fields14",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1504,
+        1760
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a6ryn8ob",
+              "name": "板块",
+              "value": "新闻媒体",
+              "type": "string"
+            },
+            {
+              "id": "a7ahrfvg",
+              "name": "分类",
+              "value": "未分类",
+              "type": "string"
+            },
+            {
+              "id": "a875ahfs",
+              "name": "标签",
+              "value": "={{ $json[\"标签\"] || \"未分类\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a9udr13b",
+              "name": "内容",
+              "value": "={{ $json[\"内容\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a10q1jx43",
+              "name": "标题",
+              "value": "={{ $json[\"标题\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a116z8yx5",
+              "name": "日期",
+              "value": "={{ $json[\"日期\"] || new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "a12meordk",
+              "name": "链接",
+              "value": "={{ $json[\"链接\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a133xbjww",
+              "name": "来源",
+              "value": "={{ $json[\"来源\"] || \"未知来源\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5df2ffca-cfd9-4256-8e05-ea9110f18a61",
+      "name": "补默认值",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2624,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json[\"日期\"] }}",
+              "rightValue": "={{ new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "1d8ac07b-ca80-4b3c-989b-9319ad71030f",
+      "name": "24h内5",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2848,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// ===== 进 AI 之前的本地粗筛（只读标题）=====\n// 位置：24h内5 → 【本节点】 → 打标签\n// 命中标准：标题里出现规则词（正文不再参与，省 token）\n// 命中 → 原样往下送；一个都没命中 → 整条丢弃\nconst src = $json;\n\n// ↓↓↓ 规则表：一条一行 [正则, 标签名]；与「打标签」节点必须完全一致 ↓↓↓\nconst 标签规则 = [\n  [/深度求索|幻方量化|梁文锋|DeepSeek/i, 'DeepSeek'],\n  [/华为|任正非|余承东|鸿蒙|海思|昇腾|HUAWEI|HarmonyOS|HiSilicon/i, '华为'],\n  [/苹果|iPhone|iOS|Mac|库克|Apple/i, '苹果'],\n  [/人工智能|大模型|ChatGPT|OpenAI|Claude|Gemini|\\bAI\\b|LLM/i, '人工智能'],\n  [/特斯拉|Model [3YXS]|马斯克|Tesla/i, '特斯拉'],\n  [/粤语|广府话|广东话|广州话/i, '粤语'],\n  [/英语|English|英文|雅思|托福|口语|翻译|双语/i, '英语'],\n];\n// ↑↑↑ 规则表结束 ↑↑↑\n\nconst 标题 = String(src['标题'] || '');\n\nconst 命中 = 标签规则.some(([词]) => {\n  const g = new RegExp(词.source, 'gi');\n  return g.test(标题);\n});\n\nif (!命中) return null;\n\n// 洗掉 HTML 与多余空白，压成一行，标题最多 200 字\nconst 净 = String(标题).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\\s+/g, ' ').trim();\n\nreturn { json: { ...src, 标题: 净.length > 200 ? 净.slice(0, 200) : 净 } };\n"
+      },
+      "id": "da6547e1-b743-4f35-91be-04fe19bccc0f",
+      "name": "本地标签筛选",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3072,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// ===== 打本地预标签（只读标题）=====\n// 输出：标签（命中几个写几个，用 / 连接）\n// 中文标签就在这里转成英文给 AI；AI 之后返回的中文标签会再转回中文。\nconst src = $json;\n\n// ↓↓↓ 规则表：一条一行 [正则, 中文标签]；与「本地标签筛选」节点必须完全一致 ↓↓↓\nconst 标签规则 = [\n  [/深度求索|幻方量化|梁文锋|DeepSeek/i, 'DeepSeek'],\n  [/华为|任正非|余承东|鸿蒙|海思|昇腾|HUAWEI|HarmonyOS|HiSilicon/i, '华为'],\n  [/苹果|iPhone|iOS|Mac|库克|Apple/i, '苹果'],\n  [/人工智能|大模型|ChatGPT|OpenAI|Claude|Gemini|\\bAI\\b|LLM/i, '人工智能'],\n  [/特斯拉|Model [3YXS]|马斯克|Tesla/i, '特斯拉'],\n  [/粤语|广府话|广东话|广州话/i, '粤语'],\n  [/英语|English|英文|雅思|托福|口语|翻译|双语/i, '英语'],\n];\n// ↑↑↑ 规则表结束 ↑↑↑\n\nconst 标题 = String(src['标题'] || '');\n\nconst 标签组 = [];\nfor (const [词, 名] of 标签规则) {\n  const g = new RegExp(词.source, 'gi');\n  if (g.test(标题) && !标签组.includes(名)) 标签组.push(名);\n}\n\nreturn { json: { ...src, 标签: 标签组.join('/') || '未分类' } };\n"
+      },
+      "id": "3d3ee9a0-f938-4f9f-86f0-9e6c1dc1c730",
+      "name": "打标签",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3296,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 批量分组：每 30 条打成一批，只带 id + 标题 =====\n// 输出每条是一个批次：{ batchNo, ids: [...], json: '给 AI 的文本' }\nconst items = $input.all();\nconst 每批 = 30;\n\nconst 批次 = [];\nfor (let i = 0; i < items.length; i += 每批) {\n  const 片 = items.slice(i, i + 每批).map((it, k) => ({\n    id: i + k,\n    标题: String(it.json['标题'] || '').replace(/\\s+/g, ' ').trim(),\n  }));\n  批次.push({\n    json: {\n      batchNo: 批次.length + 1,\n      ids: 片.map(p => p.id),\n      json: 片.map(p => `${p.id}｜${p.标题}`).join('\\n'),\n    },\n  });\n}\n\nreturn 批次;\n"
+      },
+      "id": "ddd7840f-bf53-4b5a-b04a-b8e5d98f72a7",
+      "name": "批量分组",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是资讯分类助手。下面是若干条资讯的「编号｜标题」。只看标题判断，不要编造。\n\n每条要给出两个东西：\n1）分类，只能取 L1 / L2 / L3 / A / G / X 之一：\n   - L1：语言是这条资讯的核心议题，而且需要完整读原文才能讲清楚（例如语言政策、方言保护、语言教育、新词热词背后的一整个事件）\n   - L2：语言是核心议题，但看标题就基本明白了，属于轻量语言话题（例如某个词典收录新词、某句台词带火一个说法）\n   - L3：可能和语言有关，但不太确定、值得先放一放观察（拿不准的语言类都放这里）\n   - A：AI、大模型、算法、算力、智能硬件等人工智能相关\n   - G：其它所有值得收的全网热点（财经、科技、社会、国际、文化等）\n   - X：只是在汇总别人的资讯（早报晚报、今日要闻、一周盘点）、或明显广告/推广。其它情况一律不要用 X\n2）标签：从下面挑，最多 2 个，用 / 连接，挑不到就留空\n   DeepSeek / Huawei / Apple / AI / Tesla / Cantonese / English\n\n要求：\n- 每条都必须有分类，不许漏、不许合并\n- 只输出一个 JSON 对象，不要任何解释、注释、markdown 代码块\n- 格式：{\"items\":[{\"id\":0,\"分类\":\"G\",\"标签\":\"\"}]}\n\n待分类资讯：\n{{ $json[\"json\"] }}",
+        "batching": {}
+      },
+      "id": "2fd42368-1773-4e38-9a45-53f16c56fc05",
+      "name": "AI批量分类",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        3744,
+        1280
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-flash",
+        "options": {
+          "maxTokens": 8000
+        }
+      },
+      "id": "47587602-7fc5-4327-ba06-1dc888148f95",
+      "name": "DeepSeek Chat Model 分类",
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        1440
+      ],
+      "credentials": {
+        "deepSeekApi": {
+          "id": "xvaefodMzAZCsD3v",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 套用 AI 分类结果 =====\n// 输入：AI批量分类（成功那一路）\n// AI 只回 id + 分类 + 标签；这里用 id 找回原条目，补回全部字段。\nconst 全部 = $('打标签').all().map(i => i.json);\n\nfunction 取数组(对象) {\n  if (!对象 || typeof 对象 !== 'object') return [];\n  for (const 键 of ['items', '结果', 'results', 'list']) {\n    if (Array.isArray(对象[键])) return 对象[键];\n  }\n  return [];\n}\n\nconst 分类表 = {};\nconst 待观察 = [];\n\nfor (const it of $input.all()) {\n  let 数据 = it.json;\n  if (typeof 数据 === 'string') {\n    try { 数据 = JSON.parse(数据); } catch (e) { continue; }\n  }\n  if (数据 && typeof 数据.text === 'string') {\n    try { 数据 = JSON.parse(数据.text); } catch (e) { /* 保持原样 */ }\n  }\n  const 结果 = 取数组(数据);\n  for (const r of 结果) {\n    const id = Number(r.id ?? r.ID ?? r.ID号);\n    if (!isFinite(id) || !全部[id]) continue;\n    let 分类 = String(r.分类 ?? r.level ?? r.L ?? '').toUpperCase().replace(/^([LAGX])[0-9]*$/, '$1');\n    if (!['L', 'A', 'G', 'X', 'L1', 'L2', 'L3'].includes(分类)) 分类 = 'G';\n    let 标签 = r.标签 ?? r.tag ?? r.tags ?? '';\n    if (Array.isArray(标签)) 标签 = 标签.join('/');\n    分类表[id] = { 分类, 标签: String(标签 || '') };\n\n    // 语言类要再分 L1 / L2 / L3\n    if (分类 === 'L') {\n      const 级 = String(r.level ?? r.级别 ?? r.L ?? '').toUpperCase().match(/L([123])/);\n      const 建议 = String(r.建议 ?? r.advice ?? '').toLowerCase();\n      if (级) 分类表[id].分类 = 'L' + 级[1];\n      else if (建议 === 'l3') 分类表[id].分类 = 'L3';\n      else 分类表[id].分类 = 'L1';\n    }\n  }\n}\n\nconst 输出 = [];\n\n全部.forEach((n, id) => {\n  const 判 = 分类表[id];\n  if (!判) return;   \n  // AI 没判断的不冒充 G\n  const 分类 = 判.分类;\n  const 标签 = (判 && 判.标签 ? 判.标签 : (n['标签'] || ''));\n\n  // X：多资讯合集 / 早报晚报汇总 / 明显广告 → 直接丢弃\n  if (分类 === 'X') return;\n\n  const 新 = { ...n, 分类, 标签 };\n\n  // L3：不抓全文，只留标题进「待观察」\n  if (分类 === 'L3') {\n    待观察.push({ id, 标题: n['标题'], 链接: n['链接'], 来源: n['来源'], 日期: n['日期'], 标签 });\n  }\n\n  输出.push({ json: 新 });\n});\n\n// 把待观察清单交给占位接口保存（先不接飞书表格）\nif (待观察.length > 0) {\n  try { $getWorkflowStaticData('global').待观察 = 待观察; } catch (e) { /* 忽略 */ }\n}\n\nreturn 输出;\n"
+      },
+      "id": "3e083efb-743f-4b0c-84c6-bc0bcc971606",
+      "name": "套用分类",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4096,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 三分类排序 =====\n// 把 AI 返回的 L1/L2/L3/A/G 归到三个频道；优先级：语言 > AI > 全网热点\n// 辅助标签转回中文\nconst items = $input.all();\n\nconst 标签英文转中文 = {\n  DeepSeek: 'DeepSeek',\n  Huawei: '华为',\n  华为: '华为',\n  Apple: '苹果',\n  苹果: '苹果',\n  AI: '人工智能',\n  人工智能: '人工智能',\n  Tesla: '特斯拉',\n  特斯拉: '特斯拉',\n  Cantonese: '粤语',\n  粤语: '粤语',\n  English: '英语',\n  英语: '英语',\n};\n\nfunction 频道(分类) {\n  if (分类 === 'L1' || 分类 === 'L2' || 分类 === 'L3') return '语言资讯';\n  if (分类 === 'A') return 'AI资讯';\n  return '全网热点资讯';\n}\n\nconst 顺序 = ['语言资讯', 'AI资讯', '全网热点资讯'];\nconst 每频道序号 = {};\nconst 结果 = [];\n\nfor (const it of items) {\n  const n = { ...it.json };\n  const 分类 = String(n['分类'] || 'G').toUpperCase();\n  n['分类'] = 频道(分类);\n  n['级别'] = 分类;\n\n  // 英文标签转中文，去重\n  const 标签组 = String(n['标签'] || '')\n    .split('/')\n    .map(t => t.trim())\n    .filter(Boolean)\n    .map(t => 标签英文转中文[t] || t);\n  n['标签'] = [...new Set(标签组)].join('/') || '未分类';\n\n  // 板块：沿用来源维度（新闻媒体 / 大厂动态 / 视频 / 社交媒体）\n  每频道序号[n['分类']] = (每频道序号[n['分类']] || 0) + 1;\n  n['_序'] = 每频道序号[n['分类']];\n\n  结果.push({ json: n });\n}\n\nreturn 结果;\n"
+      },
+      "id": "4d8474e2-5f75-44b0-a138-9ef8ad8908c3",
+      "name": "分类排序",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 挑出语言资讯（L1 / L2 才抓全文）=====\n// L3 已在上一节点记进「待观察」，这里只放行 L1 / L2\n// 凡是能进到本节点的，分类都是「语言资讯」\nconst items = $input.all();\n\nconst 抓 = items\n  .filter(it => {\n    const 级 = String(it.json['级别'] || '');\n    return 级 === 'L1' || 级 === 'L2';\n  })\n  .map(it => ({ json: it.json }));\n\nreturn 抓;\n"
+      },
+      "id": "41856c7d-e2cc-470e-b526-8b84da90b598",
+      "name": "挑出语言资讯",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4544,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json[\"链接\"] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "zh-CN,zh;q=0.9,en;q=0.8"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "48211901-abd0-4bf9-a2f4-21783c3a2f09",
+      "name": "抓取全文",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4720,
+        1280
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// ===== 清洗网页正文 =====\n// 抓不到 / 截断时，退回 RSS 摘要（保底，保证这条资讯还会推送）\nconst 原文 = $('挑出语言资讯').item.json;\nconst r = $json;\n\nlet 正文 = '';\ntry {\n  const 原始 = typeof r === 'string' ? r : (r && (r.data || r.body || r.text)) || '';\n  正文 = String(原始)\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&[a-z]+;/gi, ' ')\n    .replace(/\\s+/g, ' ')\n    .trim();\n} catch (e) {\n  正文 = '';\n}\n\n// 抓不到有效正文（少于 150 字）就用 RSS 摘要兜底\nif (正文.length < 150) {\n  正文 = String(原文['内容'] || '').replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim();\n}\n\n// 最多 3000 字，控制 AI 消耗\nif (正文.length > 3000) 正文 = 正文.slice(0, 3000) + '…';\n\nreturn { json: { ...原文, 正文 } };\n"
+      },
+      "id": "86139934-b8c6-4e55-9923-fbee88504c48",
+      "name": "清洗正文",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5312,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=你是语言话题的资讯编辑，读者是语言类自媒体博主。\n\n下面这条资讯，标题（可能是英文，请翻成中文放进「中文标题」）：{{ $json[\"标题\"] }}\n来源：{{ $json[\"来源\"] }}\n正文：{{ $json[\"正文\"] }}\n\n输出五个字段：\n0) 中文标题：把原标题翻成简洁中文，不超过 40 字，不要加书名号\n1) 核心观点：这件事到底讲了什么，一句话，不超过 80 字\n2) 语言话题：牵涉哪方面的语言话题（例如：方言保护、语言政策、网络热词、翻译与外语教育、语言与身份认同），不超过 40 字\n3) 值得关注：为什么值得一条语言号关注，或者能延展成什么选题，不超过 100 字\n4) 原文摘要：正文的要点概括，不超过 120 字，不要抄标题\n\n要求：\n- 只输出一个 JSON 对象，不要任何解释、注释、markdown 代码块\n- 正文若明显抓错（是登录页、404、反爬页面），这四个字段就基于标题合理概括，并在「值得关注」里注明「正文未抓到」\n- 格式：{\"items\":[{\"id\":0,\"中文标题\":\"\",\"核心观点\":\"\",\"语言话题\":\"\",\"值得关注\":\"\",\"原文摘要\":\"\"}]}",
+        "batching": {}
+      },
+      "id": "616c8c1e-4fcf-479e-9cd6-f1db5f05239c",
+      "name": "语言资讯深度解析",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        5024,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 1200
+        }
+      },
+      "id": "12fba904-ee06-461f-b35d-5123f9bdbe8e",
+      "name": "DeepSeek Chat Model 深度解析",
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        5040,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/rss.xml",
+        "options": {}
+      },
+      "id": "d081c0d5-4760-44c6-9a0a-88d22b3c3358",
+      "name": "BBC News bbc新闻",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        1504,
+        1952
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "BBC新闻",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "27d81c6c-7e3e-4604-83e9-4559e4abcfdb",
+      "name": "Edit Fields26",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        1952
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 程序整理：AI 资讯 + 全网热点 =====\n// 这两类不用 AI 改写，只由程序保留标题、截断摘要、统一字段\nconst 分类顺序 = ['语言资讯', 'AI资讯', '全网热点资讯'];\n\nconst items = $input.all().map(i => i.json);\n\nfunction 洗(t) {\n  return String(t || '')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&[a-z]+;/gi, ' ')\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nfunction 截(t, n) {\n  const s = 洗(t);\n  return s.length > n ? s.slice(0, n) + '…' : s;\n}\n\nconst 输出 = [];\n\nfor (const n of items) {\n  const 分类 = String(n['分类'] || '');\n  if (!分类顺序.includes(分类)) continue;\n\n  const 标题 = 洗(n['标题']);\n  if (!标题) continue;\n\n  const 条 = {\n    标题,\n    内容: 截(n['内容'] || n['正文'] || '', 140),\n    日期: n['日期'] || new Date().toISOString(),\n    链接: String(n['链接'] || '').trim(),\n    来源: n['来源'] || '未知来源',\n    板块: n['板块'] || '新闻媒体',\n    分类,\n    标签: n['标签'] || '未分类',\n    级别: n['级别'] || '',\n  };\n\n  // 语言线把深度解析结果一并带上\n  if (分类 === '语言资讯') {\n    条['核心观点'] = String(n['核心观点'] || '');\n    条['语言话题'] = String(n['语言话题'] || '');\n    条['值得关注'] = String(n['值得关注'] || '');\n    条['原文摘要'] = String(n['原文摘要'] || '');\n    条['待观察'] = !!n['待观察'];\n  }\n\n  输出.push({ json: 条 });\n}\n\nreturn 输出;\n"
+      },
+      "id": "1585c31b-b696-4fd6-ac7c-d84dd1e309eb",
+      "name": "程序整理AI与热点",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5696,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "YouTube",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "58752755-e4aa-470a-8406-4283e8ff0783",
+      "name": "Edit Fields8",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2016,
+        2112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "<__PLACEHOLDER_VALUE__补充 RSS 地址__>",
+        "options": {}
+      },
+      "id": "37b8bca2-f148-4b51-bf51-c98ef9ef241f",
+      "name": "补充源 RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        1952,
+        2336
+      ],
+      "maxTries": 2,
+      "waitBetweenTries": 300,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1r2b1oc",
+              "name": "标题",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a2nps8hs",
+              "name": "内容",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "a3nnmwet",
+              "name": "日期",
+              "value": "={{ $json.isoDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a42iucsv",
+              "name": "链接",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "a5zmph0u",
+              "name": "来源",
+              "value": "补充源",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f3ff81d6-8173-49b0-9d17-160f3ea597f4",
+      "name": "补充源字段",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2176,
+        2336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REPLACE_WITH_DATA_TABLE_ID"
+        },
+        "returnAll": true
+      },
+      "id": "b7fc4dac-6762-4d52-95de-d462b854a4f3",
+      "name": "读取已推送记录",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        6144,
+        1552
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 查重 =====\n// 规则（沿用老规矩）：链接 或 标题 任一命中即算已发过\n// 记录只保留 7 天，更早的不参与比对\nconst 资讯 = $('程序整理AI与热点').all().map(i => i.json);\n\nlet 旧记录 = [];\ntry { 旧记录 = $('读取已推送记录').all().map(i => i.json); } catch (e) { 旧记录 = []; }\n\nconst 七天前 = Date.now() - 7 * 24 * 60 * 60 * 1000;\n\nconst 有效旧记录 = 旧记录.filter(r => {\n  const t = r.pushed_at ? new Date(r.pushed_at).getTime() : 0;\n  return t >= 七天前;\n});\n\nconst 已发链接 = new Set(有效旧记录.map(r => String(r.link || '').trim()).filter(Boolean));\nconst 已发标题 = new Set(有效旧记录.map(r => String(r.title || '').trim()).filter(Boolean));\n\nconst 新的 = 资讯.filter(n => {\n  const link = String(n['链接'] || '').trim();\n  const title = String(n['标题'] || '').trim();\n  if (link && 已发链接.has(link)) return false;\n  if (title && 已发标题.has(title)) return false;\n  return true;\n});\n\nreturn 新的.map(n => ({ json: n }));\n"
+      },
+      "id": "454cd797-659a-42ba-878f-e71dfe36c26d",
+      "name": "查重",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6752,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 最终排序 =====\n// 频道顺序：语言资讯 → AI资讯 → 全网热点资讯\nconst items = $input.all();\n\nconst sectionOrder = ['语言资讯', 'AI资讯', '全网热点资讯'];\n\nitems.sort((a, b) => {\n  const ia = sectionOrder.indexOf(a.json['分类'] || '');\n  const ib = sectionOrder.indexOf(b.json['分类'] || '');\n  return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);\n});\n\nreturn items;\n"
+      },
+      "id": "0cde44aa-12fa-4778-b031-787559dc6510",
+      "name": "分类排序1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6944,
+        1840
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 全网热点小报 =====\nconst items = $input.all().map(i => i.json);\n\nconst list = items.filter(n => n['分类'] === '全网热点资讯');\n\nfunction fmtTime(v) {\n  if (!v) return '';\n  const d = new Date(v);\n  if (isNaN(d.getTime())) return '';\n  const p = x => String(x).padStart(2, '0');\n  return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;\n}\n\nfunction cut(t, n) {\n  const s = String(t || '').replace(/\\s+/g, ' ').trim();\n  return s.length > n ? s.slice(0, n) + '…' : s;\n}\n\nconst 板块顺序 = ['新闻媒体', '大厂动态', '视频', '社交媒体'];\n\nlet md = `# ${$now.toFormat('yyyy-MM-dd')} 全网热点小报\\n`;\n\nif (list.length === 0) {\n  md += '\\n今天没有可推送的资讯。\\n';\n}\n\nconst 板块集 = [...new Set(list.map(n => n['板块'] || '新闻媒体'))];\n板块集.sort((a, b) => {\n  const ia = 板块顺序.indexOf(a), ib = 板块顺序.indexOf(b);\n  return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);\n});\n\nfor (const 板块 of 板块集) {\n  const 组 = list.filter(n => (n['板块'] || '新闻媒体') === 板块);\n  md += `\\n## ${板块}\\n\\n`;\n  for (const n of 组) {\n    md += `【${板块}】 〔${n['标签'] || '未分类'}〕 《${n['来源'] || ''}》 ${fmtTime(n['日期'])}\\n`;\n    md += `${n['标题'] || ''}\\n`;\n    const c = cut(n['内容'], 120);\n    if (c && c !== n['标题']) md += `${c}\\n`;\n    md += `${n['链接'] || ''}\\n\\n`;\n  }\n}\n\nreturn [{ json: { markdown: md } }];\n"
+      },
+      "id": "79761cd4-cd3f-4c8b-b411-d45903913fe4",
+      "name": "全网热点小报",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7184,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.feishu.cn/open-apis/bot/v2/hook/REPLACE_WITH_FEISHU_WEBHOOK_TOKEN",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "3fdb96b3-5793-456f-9aba-f9a010657015",
+      "name": "HTTP Request7",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        7744,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REPLACE_WITH_DATA_TABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "link": "={{ $('分类排序1').item.json['链接'] }}",
+            "title": "={{ $('分类排序1').item.json['标题'] }}",
+            "pushed_at": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "pushed_at",
+              "displayName": "pushed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "fba77c2f-7b75-41ea-bc18-24ea0e27083f",
+      "name": "已推送记录",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        7968,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== AI资讯小报 =====\nconst items = $input.all().map(i => i.json);\n\nconst list = items.filter(n => n['分类'] === 'AI资讯');\n\nfunction fmtTime(v) {\n  if (!v) return '';\n  const d = new Date(v);\n  if (isNaN(d.getTime())) return '';\n  const p = x => String(x).padStart(2, '0');\n  return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;\n}\n\nfunction cut(t, n) {\n  const s = String(t || '').replace(/\\s+/g, ' ').trim();\n  return s.length > n ? s.slice(0, n) + '…' : s;\n}\n\nconst 板块顺序 = ['大厂动态', '新闻媒体', '视频', '社交媒体'];\n\nlet md = `# ${$now.toFormat('yyyy-MM-dd')} AI资讯小报\\n`;\n\nif (list.length === 0) {\n  md += '\\n今天没有可推送的资讯。\\n';\n}\n\nconst 板块集 = [...new Set(list.map(n => n['板块'] || '新闻媒体'))];\n板块集.sort((a, b) => {\n  const ia = 板块顺序.indexOf(a), ib = 板块顺序.indexOf(b);\n  return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);\n});\n\nfor (const 板块 of 板块集) {\n  const 组 = list.filter(n => (n['板块'] || '新闻媒体') === 板块);\n  md += `\\n## ${板块}\\n\\n`;\n  for (const n of 组) {\n    md += `【${板块}】 〔${n['标签'] || '未分类'}〕 《${n['来源'] || ''}》 ${fmtTime(n['日期'])}\\n`;\n    md += `${n['标题'] || ''}\\n`;\n    const c = cut(n['内容'], 120);\n    if (c && c !== n['标题']) md += `${c}\\n`;\n    md += `${n['链接'] || ''}\\n\\n`;\n  }\n}\n\nreturn [{ json: { markdown: md } }];\n"
+      },
+      "id": "94500cc2-5570-47c4-a568-8d759065c73b",
+      "name": "AI资讯小报",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7184,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 语言资讯小报 =====\n// L1 / L2 带深度解析；L3 单独列进「待观察」，只有标题和链接\nconst items = $input.all().map(i => i.json);\n\nconst 全部 = items.filter(n => n['分类'] === '语言资讯');\nconst 主列 = 全部.filter(n => n['级别'] !== 'L3');\nconst 待观察 = 全部.filter(n => n['级别'] === 'L3');\n\nfunction fmtTime(v) {\n  if (!v) return '';\n  const d = new Date(v);\n  if (isNaN(d.getTime())) return '';\n  const p = x => String(x).padStart(2, '0');\n  return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;\n}\n\nfunction cut(t, n) {\n  const s = String(t || '').replace(/\\s+/g, ' ').trim();\n  return s.length > n ? s.slice(0, n) + '…' : s;\n}\n\nlet md = `# ${$now.toFormat('yyyy-MM-dd')} 语言资讯小报\\n`;\n\nif (全部.length === 0) {\n  md += '\\n今天没有可推送的资讯。\\n';\n}\n\nfor (const n of 主列) {\n  md += `\\n## ${n['板块'] || '新闻媒体'}\\n\\n`;\n  md += `【${n['板块'] || '新闻媒体'}】 〔${n['标签'] || '未分类'}〕 《${n['来源'] || ''}》 ${fmtTime(n['日期'])}\\n`;\n  md += `${n['标题'] || ''}\\n`;\n  if (n['核心观点']) md += `核心观点：${cut(n['核心观点'], 120)}\\n`;\n  if (n['语言话题']) md += `语言话题：${cut(n['语言话题'], 120)}\\n`;\n  if (n['值得关注']) md += `值得关注：${cut(n['值得关注'], 160)}\\n`;\n  const 摘要 = cut(n['原文摘要'] || n['内容'], 120);\n  if (摘要 && 摘要 !== n['标题']) md += `${摘要}\\n`;\n  md += `${n['链接'] || ''}\\n\\n`;\n}\n\nif (待观察.length > 0) {\n  md += '\\n## 待观察\\n\\n';\n  for (const n of 待观察) {\n    md += `〔${n['标签'] || '未分类'}〕 《${n['来源'] || ''}》 ${fmtTime(n['日期'])}\\n`;\nif (n['中文标题']) {\n  md += `${n['中文标题']}\\n`;\n  md += `> ${n['标题'] || ''}\\n`;\n} else {\n  md += `${n['标题'] || ''}\\n`;\n}\n    md += `${n['链接'] || ''}\\n\\n`;\n  }\n}\n\nreturn [{ json: { markdown: md } }];\n"
+      },
+      "id": "b0ad1160-7305-4f64-b27d-88ff2fcd6bb6",
+      "name": "语言资讯小报",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7184,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a171ryqyq",
+              "name": "标题",
+              "value": "={{ $json[\"标题\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a18v1sc7y",
+              "name": "链接",
+              "value": "={{ $json[\"链接\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a192nynmf",
+              "name": "来源",
+              "value": "={{ $json[\"来源\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "a20wee2z8",
+              "name": "标签",
+              "value": "={{ $json[\"标签\"] || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "16fda231-f195-4872-88f3-dee504e594d1",
+              "name": "日期",
+              "value": "={{ $json[\"日期\"] || \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ae0d7c91-de80-4b32-8010-c9974616a67d",
+      "name": "待观察占位输出",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6368,
+        1904
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REPLACE_WITH_DATA_TABLE_ID"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "pushed_at",
+              "condition": "lt",
+              "keyValue": "={{ new Date(Date.now() - 7*24*60*60*1000).toISOString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d0b0b0ca-6773-4d2e-acb0-7215f830a3a6",
+      "name": "清理旧纪录",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        8192,
+        1824
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c30c4141-4b42-4c1e-98f1-5921224e2cff",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1728,
+        992
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4e115ee3-8894-404d-bf9b-c745f7a56fdd",
+      "name": "Merge2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1952,
+        1088
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4c1cc2d4-d3b6-463a-acd8-db86a9056d50",
+      "name": "Merge3",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2176,
+        1184
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ed9a5f79-1e64-4537-9cfa-163479c8df18",
+      "name": "Merge4",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2400,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 把深度解析的 4 个字段按 id 并回原条目\nconst 原文 = $('挑出语言资讯').item.json;   // 与当前条目配对的原条目\n\nlet 数据 = $json;\nif (typeof 数据 === 'string') { try { 数据 = JSON.parse(数据); } catch (e) {} }\nif (数据 && typeof 数据.text === 'string') { try { 数据 = JSON.parse(数据.text); } catch (e) {} }\nconst 列表 = (数据 && Array.isArray(数据.items)) ? 数据.items : [];\nconst 解析 = 列表[0] || {};\n\nreturn { json: { ...原文,\n  中文标题: String(解析.中文标题 || ''),\n  核心观点: String(解析.核心观点 || ''),\n  语言话题: String(解析.语言话题 || ''),\n  值得关注: String(解析.值得关注 || ''),\n  原文摘要: String(解析.原文摘要 || ''),\n} };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5312,
+        1152
+      ],
+      "id": "8ba1c0a2-2aaa-4e59-ba4a-e2930035e5db",
+      "name": "合并解释结果"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 承接 AI资讯 + 全网热点，语言类的走另一条线\nreturn $input.all()\n  .filter(it => ['AI资讯', '全网热点资讯'].includes(it.json['分类']))\n  .map(it => ({ json: it.json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4544,
+        1504
+      ],
+      "id": "3640dfaa-0568-4168-a7f8-dcc8894ce5dd",
+      "name": "非语言类"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        5520,
+        1392
+      ],
+      "id": "367da7b0-c224-4d3e-b5b4-cc0a1119e90f",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        6416,
+        1456
+      ],
+      "id": "fc93a447-41e0-4ec4-9288-178798ea79fa",
+      "name": "Merge8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 飞书卡片包装 =====\nconst markdown = $input.first().json.markdown;\n\nreturn [\n  {\n    json: {\n      msg_type: 'interactive',\n      card: {\n        elements: [\n          {\n            tag: 'markdown',\n            content: markdown,\n          },\n        ],\n      },\n    },\n  },\n];\n"
+      },
+      "id": "e9ba9da6-af27-4ab5-a9fa-93f73f4373df",
+      "name": "飞书卡片包装",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7456,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 飞书卡片包装 =====\nconst markdown = $input.first().json.markdown;\n\nreturn [\n  {\n    json: {\n      msg_type: 'interactive',\n      card: {\n        elements: [\n          {\n            tag: 'markdown',\n            content: markdown,\n          },\n        ],\n      },\n    },\n  },\n];\n"
+      },
+      "id": "0ac10360-8513-4404-9a60-25132a8f684f",
+      "name": "飞书卡片包装1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7456,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== 飞书卡片包装 =====\nconst markdown = $input.first().json.markdown;\n\nreturn [\n  {\n    json: {\n      msg_type: 'interactive',\n      card: {\n        elements: [\n          {\n            tag: 'markdown',\n            content: markdown,\n          },\n        ],\n      },\n    },\n  },\n];\n"
+      },
+      "id": "40dbd343-dcdd-441b-b971-c851deb659c9",
+      "name": "飞书卡片包装2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7456,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "feeds",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        2128
+      ],
+      "id": "3c4db53c-ce18-4c83-b5da-8a5b11e0f1e2",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"feeds\": [\n    \"UC6of7UYhctnYmqABjUqzuxw\",\n    \"UCTxyBu9VWUq5LXezXwy_SGg\",\n    \"UCHQoZ0_MHDXIgWeRvPTLTJw\",\n    \"UC2fAiRQHRQT9aj9P_ijYeow\",\n    \"UCHaHD477h-FeBbVh9Sh7syA\",\n    \"UCKgpamMlm872zkGDcBJHYDg\"\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1424,
+        2128
+      ],
+      "id": "d26aa5fe-872e-44de-bff1-da9da11071e5",
+      "name": "油管更新",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 抓取全文成功后，把网页正文清洗出来，同时保留原条目字段\nconst 原文 = $('挑出语言资讯').item.json;   // 原条目（含标题/来源/链接）\n\nlet 原始 = '';\ntry {\n  const r = $json;\n  原始 = typeof r === 'string' ? r : (r && (r.data || r.body || r.text)) || '';\n} catch (e) { 原始 = ''; }\n\nlet 正文 = String(原始)\n  .replace(/<script[\\s\\S]*?<\\/script>/gi, ' ')\n  .replace(/<style[\\s\\S]*?<\\/style>/gi, ' ')\n  .replace(/<[^>]+>/g, ' ')\n  .replace(/&nbsp;/g, ' ')\n  .replace(/&[a-z]+;/gi, ' ')\n  .replace(/\\s+/g, ' ')\n  .trim();\n\n// 抓不到有效正文（少于 150 字）就用 RSS 摘要兜底\nif (正文.length < 150) {\n  正文 = String(原文['内容'] || '').replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim();\n}\n\n// 最多 3000 字\nif (正文.length > 3000) 正文 = 正文.slice(0, 3000) + '…';\n\nreturn { json: { ...原文, 正文 } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4864,
+        1152
+      ],
+      "id": "bbe2cbd4-5d83-4cf1-a637-7830932e382e",
+      "name": "整理正文"
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:table:record:add",
+        "app_toke": "REPLACE_WITH_FEISHU_BITABLE_APP_TOKEN",
+        "table_id": "REPLACE_WITH_FEISHU_BITABLE_TABLE_ID"
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        6560,
+        2000
+      ],
+      "id": "b2eac235-d936-473c-8933-27c6a3666247",
+      "name": "飞书多维表格",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "v2FeishuCred0001"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.youtube.com/feeds/videos.xml?channel_id={{ $json.feeds }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        1824,
+        2128
+      ],
+      "id": "f26cf530-12e9-4b6a-b346-9c3fcd9686d0",
+      "name": "youtube channel",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 只放行 L3（待观察）\nreturn $input.all()\n  .filter(it => it.json['级别'] === 'L3')\n  .map(it => ({ json: it.json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6144,
+        1744
+      ],
+      "id": "00f513f8-ef22-4853-b123-8234fa050441",
+      "name": "筛出待观察"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "afp 法新社": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields23",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields23": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
+      "main": [
+        [
+          {
+            "node": "Merge11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "36kr 36氪": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields21",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields21": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge11": {
+      "main": [
+        [
+          {
+            "node": "Merge12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "thepaper 澎湃新闻": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields20": {
+      "main": [
+        [
+          {
+            "node": "Merge11",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge12": {
+      "main": [
+        [
+          {
+            "node": "Merge13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "newscn 新华社": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields19": {
+      "main": [
+        [
+          {
+            "node": "Merge12",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge13": {
+      "main": [
+        [
+          {
+            "node": "Merge14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "jiemian 界面新闻": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields17": {
+      "main": [
+        [
+          {
+            "node": "Merge13",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge14": {
+      "main": [
+        [
+          {
+            "node": "Merge15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "zaobao 联合早报中港台": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields16": {
+      "main": [
+        [
+          {
+            "node": "Merge14",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge15": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "The Guardian 卫报": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields15": {
+      "main": [
+        [
+          {
+            "node": "Merge15",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reuters路透社": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields25",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields25": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "纽约时报": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields14": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "补默认值": {
+      "main": [
+        [
+          {
+            "node": "24h内5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "24h内5": {
+      "main": [
+        [
+          {
+            "node": "本地标签筛选",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "本地标签筛选": {
+      "main": [
+        [
+          {
+            "node": "打标签",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "打标签": {
+      "main": [
+        [
+          {
+            "node": "批量分组",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "批量分组": {
+      "main": [
+        [
+          {
+            "node": "AI批量分类",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI批量分类": {
+      "main": [
+        [
+          {
+            "node": "套用分类",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "DeepSeek Chat Model 分类": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI批量分类",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分类排序": {
+      "main": [
+        [
+          {
+            "node": "挑出语言资讯",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "非语言类",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "挑出语言资讯": {
+      "main": [
+        [
+          {
+            "node": "抓取全文",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "抓取全文": {
+      "main": [
+        [
+          {
+            "node": "整理正文",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "清洗正文",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "语言资讯深度解析": {
+      "main": [
+        [
+          {
+            "node": "合并解释结果",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "清洗正文",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model 深度解析": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "语言资讯深度解析",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BBC News bbc新闻": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields26",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields26": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields8": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "补充源 RSS": {
+      "main": [
+        [
+          {
+            "node": "补充源字段",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "补充源字段": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "读取已推送记录": {
+      "main": [
+        [
+          {
+            "node": "Merge8",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "查重": {
+      "main": [
+        [
+          {
+            "node": "分类排序1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "分类排序1": {
+      "main": [
+        [
+          {
+            "node": "全网热点小报",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI资讯小报",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "语言资讯小报",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "全网热点小报": {
+      "main": [
+        [
+          {
+            "node": "飞书卡片包装2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "已推送记录",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "已推送记录": {
+      "main": [
+        [
+          {
+            "node": "清理旧纪录",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI资讯小报": {
+      "main": [
+        [
+          {
+            "node": "飞书卡片包装1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "afp 法新社",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "36kr 36氪",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "thepaper 澎湃新闻",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "newscn 新华社",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "jiemian 界面新闻",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "zaobao 联合早报中港台",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "The Guardian 卫报",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reuters路透社",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "纽约时报",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "BBC News bbc新闻",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "补充源 RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "油管更新",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "套用分类": {
+      "main": [
+        [
+          {
+            "node": "分类排序",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "补默认值",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "合并解释结果": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "非语言类": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "程序整理AI与热点",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "程序整理AI与热点": {
+      "main": [
+        [
+          {
+            "node": "Merge8",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "读取已推送记录",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "筛出待观察",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "清洗正文": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "语言资讯小报": {
+      "main": [
+        [
+          {
+            "node": "飞书卡片包装",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge8": {
+      "main": [
+        [
+          {
+            "node": "查重",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "飞书卡片包装": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "飞书卡片包装1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "飞书卡片包装2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "youtube channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "油管更新": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "整理正文": {
+      "main": [
+        [
+          {
+            "node": "语言资讯深度解析",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "youtube channel": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "待观察占位输出": {
+      "main": [
+        [
+          {
+            "node": "飞书多维表格",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "筛出待观察": {
+      "main": [
+        [
+          {
+            "node": "待观察占位输出",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4305a094-f69e-48ec-af95-592702d710d8",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "v2NewsAggregate1",
+  "tags": []
+}
