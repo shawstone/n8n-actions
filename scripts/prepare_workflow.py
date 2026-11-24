@@ -12,7 +12,6 @@ from typing import Any
 
 
 DEEPSEEK_CREDENTIAL_ID = "xvaefodMzAZCsD3v"
-FEISHU_CREDENTIAL_ID = "v2FeishuCred0001"
 DRY_RUN_LIMIT_NODE_ID = "f425620f-4c52-4f13-93b6-8b41a17d7afb"
 EXTRA_FEED_INPUT_NODE_ID = "e9606b82-9f29-4d5c-b7a8-5ef62415a4c8"
 
@@ -185,19 +184,7 @@ def patch_tables(workflow: dict[str, Any], data_table_id: str) -> None:
 
 
 def patch_credentials_and_secrets(workflow: dict[str, Any], publish: bool) -> None:
-    feishu_bitable = node_by_name(workflow, "飞书多维表格")
-    feishu_bitable["credentials"] = {
-        "feishuCredentialsApi": {"id": FEISHU_CREDENTIAL_ID}
-    }
-
-    app_token = os.getenv("FEISHU_BITABLE_APP_TOKEN", "").strip()
-    table_id = os.getenv("FEISHU_BITABLE_TABLE_ID", "").strip()
     webhook_url = os.getenv("FEISHU_WEBHOOK_URL", "").strip()
-
-    if app_token:
-        feishu_bitable["parameters"]["app_toke"] = app_token
-    if table_id:
-        feishu_bitable["parameters"]["table_id"] = table_id
     if webhook_url:
         node_by_name(workflow, "HTTP Request7")["parameters"]["url"] = webhook_url
 
@@ -207,10 +194,6 @@ def patch_credentials_and_secrets(workflow: dict[str, Any], publish: bool) -> No
             for name, value in {
                 "DEEPSEEK_API_KEY": os.getenv("DEEPSEEK_API_KEY"),
                 "FEISHU_WEBHOOK_URL": webhook_url,
-                "FEISHU_APP_ID": os.getenv("FEISHU_APP_ID"),
-                "FEISHU_APP_SECRET": os.getenv("FEISHU_APP_SECRET"),
-                "FEISHU_BITABLE_APP_TOKEN": app_token,
-                "FEISHU_BITABLE_TABLE_ID": table_id,
             }.items()
             if not value
         ]
@@ -228,6 +211,13 @@ def replace_with_noop(workflow: dict[str, Any], node_names: set[str]) -> None:
         node["typeVersion"] = 1
         node["parameters"] = {}
         node.pop("credentials", None)
+
+
+def disable_bitable_side_branch(workflow: dict[str, Any]) -> None:
+    # The v2 community node export has no record body and requires a community
+    # package that is not reliably loaded after restoring a cached n8n database.
+    # Keep the pending item branch connected but make it a no-op for now.
+    replace_with_noop(workflow, {"飞书多维表格"})
 
 
 def add_dry_run_limit(workflow: dict[str, Any]) -> None:
@@ -301,6 +291,7 @@ def main() -> int:
     patch_sources(workflow, sources)
     configure_optional_source(workflow, sources)
     patch_prompts_and_tags(workflow, args.config_dir)
+    disable_bitable_side_branch(workflow)
 
     data_table_id = os.getenv("DATA_TABLE_ID", "").strip()
     patch_tables(workflow, data_table_id)
