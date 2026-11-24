@@ -9,6 +9,8 @@ Schedule Trigger 不负责 GitHub 定时，GitHub Actions 的 cron 才是调度�
 - `dry-run`：最多处理 3 条资讯；跳过飞书发送、飞书多维表格和推送记录写入。
 - `publish`：执行完整工作流，写入 Data Table、发送飞书卡片并写入待观察多维表格。
 - 手动运行默认 `dry-run`；每天北京时间 09:00 的定时运行使用 `publish`。
+- 定时推送默认关闭；完成手动 `dry-run` 和 `publish` 验证后，再设置仓库变量
+  `PUBLISH_ENABLED=true` 启用。
 - v2 的 Data Table 状态通过 GitHub Actions Cache 跨运行保存。
 
 ## 必须配置的 GitHub Secrets
@@ -34,7 +36,8 @@ n8n 凭证将无法解密。不要在仓库或聊天中提交任何真实密钥�
 2. 在 Actions 中手动运行 `n8n information aggregator v2`，模式选 `dry-run`。
 3. 检查运行摘要、DeepSeek 结果和错误日志。
 4. 确认无误后，再手动运行一次 `publish`。
-5. 最后启用每天 09:00 的定时任务。
+5. 在 **Settings → Secrets and variables → Actions → Variables** 中添加
+   `PUBLISH_ENABLED=true`，启用每天 09:00 的定时任务。
 
 首次运行会自动创建名为 `已推送记录` 的 Data Table，列结构是
 `link`、`title`、`pushed_at`。后续运行会从 Actions Cache 恢复该状态。

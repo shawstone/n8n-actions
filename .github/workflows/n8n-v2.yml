@@ -24,6 +24,7 @@ concurrency:
 
 jobs:
   run:
+    if: github.event_name != 'schedule' || vars.PUBLISH_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
