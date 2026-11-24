@@ -9,9 +9,9 @@
     "The Guardian 卫报": "https://www.theguardian.com/international/rss",
     "Reuters路透社": "https://news.google.com/rss/search?q=when:24h+site:reuters.com&ceid=US:en&hl=en-US&gl=US",
     "纽约时报": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/spotlight/artificial-intelligence/rss.xml",
-    "BBC News bbc新闻": "https://feeds.bbci.co.uk/news/rss.xml",
-    "补充源 RSS": null
+    "BBC News bbc新闻": "https://feeds.bbci.co.uk/news/rss.xml"
   },
+  "extra_feeds": [],
   "youtube_channels": [
     "UC6of7UYhctnYmqABjUqzuxw",
     "UCTxyBu9VWUq5LXezXwy_SGg",

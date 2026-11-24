@@ -85,6 +85,11 @@ def validate_config(template: dict[str, Any]) -> None:
     for name in sources["rss_nodes"]:
         if name not in names:
             raise ValueError(f"Configured RSS node not found: {name}")
+    for feed in sources["extra_feeds"]:
+        if not str(feed.get("url", "")).startswith(("http://", "https://")):
+            raise ValueError("Every extra feed needs an HTTP(S) URL")
+        if not feed.get("source"):
+            raise ValueError("Every extra feed needs a source label")
     if not sources["youtube_channels"]:
         raise ValueError("At least one YouTube channel ID is required")
 

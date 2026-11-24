@@ -44,18 +44,20 @@ n8n 凭证将无法解密。不要在仓库或聊天中提交任何真实密钥�
 
 ## 日常维护
 
-- 修改资讯源：编辑 `config/sources.json`。
+- 修改固定资讯源：编辑 `config/sources.json` 的 `rss_nodes`。
+- 增加任意多条 RSS：把 `{ "url": "...", "source": "来源名" }` 加入
+  `extra_feeds`，运行时会自动生成输入并只启用这一个补充源分支。
 - 增删标签规则：编辑 `config/tag-rules.json`。
 - 修改 AI 分类任务：编辑 `config/prompts/ai-classify.txt`。
 - 修改语言深度解析任务：编辑 `config/prompts/language-analysis.txt`。
 - 增加新的 RSS 节点或改动工作流连接：在 n8n 中更新后重新导出
   `n8n/workflow.template.json`。
 
-`补充源 RSS` 的 URL 为 `null` 时，运行时会自动移除这个空分支。
+`extra_feeds` 为空时，运行时会自动移除 `补充源 RSS` 的空分支。
 
 ## 重要限制
 
 - GitHub 的定时任务可能有几分钟到十几分钟延迟。
-- 新的 RSS 节点仍需先在 n8n 中搭好并重新导出模板；目前只支持配置文件更新已有源。
+- 新的固定分支如果需要在固定来源之外改变连接逻辑，仍需在 n8n 中更新并重新导出模板。
 - Actions Cache 不是永久数据库。长期停跑后缓存可能被回收，届时查重历史会重新建立。
 - n8n 工作流升级后，必须重新做一次 `dry-run`，确认社区飞书节点和 Data Table 仍兼容。

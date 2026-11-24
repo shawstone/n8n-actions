@@ -14,6 +14,7 @@ from typing import Any
 DEEPSEEK_CREDENTIAL_ID = "xvaefodMzAZCsD3v"
 FEISHU_CREDENTIAL_ID = "v2FeishuCred0001"
 DRY_RUN_LIMIT_NODE_ID = "f425620f-4c52-4f13-93b6-8b41a17d7afb"
+EXTRA_FEED_INPUT_NODE_ID = "e9606b82-9f29-4d5c-b7a8-5ef62415a4c8"
 
 
 def load_json(path: Path) -> Any:
@@ -98,9 +99,48 @@ def patch_sources(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
     }
 
 
-def disable_optional_empty_source(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
-    optional_url = sources.get("rss_nodes", {}).get("补充源 RSS")
-    if optional_url:
+def configure_optional_source(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
+    extra_feeds = sources.get("extra_feeds", [])
+    if extra_feeds:
+        for feed in extra_feeds:
+            if not str(feed.get("url", "")).startswith(("http://", "https://")):
+                raise ValueError("Every extra feed needs an HTTP(S) URL")
+
+        input_node_name = "Extra Feed Input"
+        workflow["nodes"].append(
+            {
+                "parameters": {
+                    "mode": "runOnceForAllItems",
+                    "jsCode": (
+                        "const feeds = "
+                        + json.dumps(extra_feeds, ensure_ascii=False)
+                        + ";\nreturn feeds.map((feed) => ({ json: feed }));"
+                    ),
+                },
+                "id": EXTRA_FEED_INPUT_NODE_ID,
+                "name": input_node_name,
+                "type": "n8n-nodes-base.code",
+                "typeVersion": 2,
+                "position": [-280, 340],
+            }
+        )
+
+        for edge in workflow["connections"]["Schedule Trigger"]["main"][0]:
+            if edge.get("node") == "补充源 RSS":
+                edge["node"] = input_node_name
+        workflow["connections"][input_node_name] = {
+            "main": [[{"node": "补充源 RSS", "type": "main", "index": 0}]]
+        }
+
+        node_by_name(workflow, "补充源 RSS")["parameters"]["url"] = "={{ $json.url }}"
+        source_assignments = node_by_name(workflow, "补充源字段")["parameters"][
+            "assignments"
+        ]["assignments"]
+        for assignment in source_assignments:
+            if assignment.get("name") == "来源":
+                assignment["value"] = (
+                    "={{ $('Extra Feed Input').item.json.source || '补充源' }}"
+                )
         return
 
     workflow["nodes"] = [
@@ -246,7 +286,7 @@ def main() -> int:
     sources = load_json(args.config_dir / "sources.json")
 
     patch_sources(workflow, sources)
-    disable_optional_empty_source(workflow, sources)
+    configure_optional_source(workflow, sources)
     patch_prompts_and_tags(workflow, args.config_dir)
 
     data_table_id = os.getenv("DATA_TABLE_ID", "").strip()
