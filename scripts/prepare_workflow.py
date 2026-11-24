@@ -93,9 +93,10 @@ def patch_sources(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
             node_by_name(workflow, name)["parameters"]["url"] = url
 
     youtube_node = node_by_name(workflow, "油管更新")
-    youtube_node["parameters"]["jsonOutput"] = {
-        "feeds": list(sources.get("youtube_channels", []))
-    }
+    youtube_node["parameters"]["jsonOutput"] = "=" + json.dumps(
+        {"feeds": list(sources.get("youtube_channels", []))},
+        ensure_ascii=False,
+    )
 
 
 def configure_optional_source(workflow: dict[str, Any], sources: dict[str, Any]) -> None:
