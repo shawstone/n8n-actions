@@ -36,6 +36,7 @@ def main() -> int:
         raise ValueError("Execution contains no runData")
 
     items = node_items(run_data, FINAL_NODE)
+    pending_items = node_items(run_data, "待观察占位输出")
     webhook_responses = []
     for response in node_items(run_data, "HTTP Request7"):
         selected = {
@@ -61,6 +62,7 @@ def main() -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "final_node": FINAL_NODE,
         "item_count": len(items),
+        "pending_item_count": len(pending_items),
         "feishu_webhook_responses": webhook_responses,
         "node_errors": node_errors,
         "items": [
@@ -73,6 +75,16 @@ def main() -> int:
                 "link": first_value(item, "链接", "url", "link"),
             }
             for item in items
+        ],
+        "pending_items": [
+            {
+                "title": first_value(item, "标题", "title"),
+                "link": first_value(item, "链接", "url", "link"),
+                "source": first_value(item, "来源", "source"),
+                "labels": first_value(item, "标签", "labels"),
+                "date": first_value(item, "日期", "date"),
+            }
+            for item in pending_items
         ],
     }
     summary_path.parent.mkdir(parents=True, exist_ok=True)
