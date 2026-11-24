@@ -1,0 +1,40 @@
+name: Feishu Bitable field check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+      FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+      FEISHU_BITABLE_APP_TOKEN: ${{ secrets.FEISHU_BITABLE_APP_TOKEN }}
+      FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Read Bitable field definitions
+        run: |
+          python3 scripts/check_feishu_bitable.py \
+            --app-id "$FEISHU_APP_ID" \
+            --app-secret "$FEISHU_APP_SECRET" \
+            --app-token "$FEISHU_BITABLE_APP_TOKEN" \
+            --table-id "$FEISHU_BITABLE_TABLE_ID" \
+            --output artifacts/feishu/bitable-fields.json
+
+      - name: Upload field definitions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: feishu-bitable-fields
+          path: artifacts/feishu/
+          if-no-files-found: warn
+          retention-days: 7

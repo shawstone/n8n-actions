@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "field_map": {
+    "title": "标题",
+    "link": "链接",
+    "source": "来源",
+    "labels": "标签",
+    "date": "日期"
+  }
+}
