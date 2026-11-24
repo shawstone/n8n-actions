@@ -36,11 +36,33 @@ def main() -> int:
         raise ValueError("Execution contains no runData")
 
     items = node_items(run_data, FINAL_NODE)
+    webhook_responses = []
+    for response in node_items(run_data, "HTTP Request7"):
+        selected = {
+            key: response[key]
+            for key in ("code", "msg", "message", "status", "statusCode", "StatusCode")
+            if key in response
+        }
+        if selected:
+            webhook_responses.append(selected)
+
+    node_errors = []
+    for node_name, runs in run_data.items():
+        if not isinstance(runs, list):
+            continue
+        for run in runs:
+            if not isinstance(run, dict) or not run.get("error"):
+                continue
+            error = run["error"]
+            message = error.get("message") if isinstance(error, dict) else str(error)
+            node_errors.append({"node": node_name, "message": str(message)[:500]})
 
     summary = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "final_node": FINAL_NODE,
         "item_count": len(items),
+        "feishu_webhook_responses": webhook_responses,
+        "node_errors": node_errors,
         "items": [
             {
                 "title": first_value(item, "标题", "title"),
