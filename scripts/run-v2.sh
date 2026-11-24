@@ -207,4 +207,20 @@ python3 scripts/render-run-summary.py \
   "$EXECUTION_OUTPUT" \
   "$ARTIFACT_DIR/run-summary.json"
 
+if [[ "$MODE" == "publish" ]]; then
+  require_value FEISHU_APP_ID
+  require_value FEISHU_APP_SECRET
+  require_value FEISHU_BITABLE_APP_TOKEN
+  require_value FEISHU_BITABLE_TABLE_ID
+
+  python3 scripts/publish_feishu_bitable.py \
+    --summary "$ARTIFACT_DIR/run-summary.json" \
+    --config config/feishu-bitable.json \
+    --app-id "$FEISHU_APP_ID" \
+    --app-secret "$FEISHU_APP_SECRET" \
+    --app-token "$FEISHU_BITABLE_APP_TOKEN" \
+    --table-id "$FEISHU_BITABLE_TABLE_ID" \
+    --output "$ARTIFACT_DIR/feishu-bitable.json"
+fi
+
 echo "Workflow execution completed successfully."
