@@ -1,0 +1,5 @@
+.n8n-state/
+artifacts/
+__pycache__/
+*.pyc
+*.log

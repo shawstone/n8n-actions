@@ -1,0 +1,28 @@
+{
+  "rss_nodes": {
+    "afp 法新社": "https://www.afp.com/en/actus/afp_communique/all/feed",
+    "36kr 36氪": "https://www.36kr.com/feed",
+    "thepaper 澎湃新闻": "https://plink.anyfeeder.com/weixin/thepapernews",
+    "newscn 新华社": "https://plink.anyfeeder.com/newscn/whxw",
+    "jiemian 界面新闻": "https://plink.anyfeeder.com/jiemian/news",
+    "zaobao 联合早报中港台": "https://plink.anyfeeder.com/zaobao/realtime/china",
+    "The Guardian 卫报": "https://www.theguardian.com/international/rss",
+    "Reuters路透社": "https://news.google.com/rss/search?q=when:24h+site:reuters.com&ceid=US:en&hl=en-US&gl=US",
+    "纽约时报": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/spotlight/artificial-intelligence/rss.xml",
+    "BBC News bbc新闻": "https://feeds.bbci.co.uk/news/rss.xml"
+  },
+  "extra_feeds": [
+    {
+      "url": "",
+      "source": ""
+    }
+  ],
+  "youtube_channels": [
+    "UC6of7UYhctnYmqABjUqzuxw",
+    "UCTxyBu9VWUq5LXezXwy_SGg",
+    "UCHQoZ0_MHDXIgWeRvPTLTJw",
+    "UC2fAiRQHRQT9aj9P_ijYeow",
+    "UCHaHD477h-FeBbVh9Sh7syA",
+    "UCKgpamMlm872zkGDcBJHYDg"
+  ]
+}

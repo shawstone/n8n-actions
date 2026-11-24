@@ -1,0 +1,75 @@
+name: n8n information aggregator v2
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "dry-run skips Feishu and state writes; publish sends and persists"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - publish
+  schedule:
+    # 09:00 Asia/Shanghai = 01:00 UTC
+    - cron: "0 1 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: n8n-v2-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    if: github.event_name != 'schedule' || vars.PUBLISH_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      MODE: ${{ github.event_name == 'schedule' && 'publish' || inputs.mode }}
+      STATE_DIR: ${{ github.workspace }}/.n8n-state
+      N8N_IMAGE: docker.n8n.io/n8nio/n8n:2.47.4
+      N8N_ENCRYPTION_KEY: ${{ secrets.N8N_ENCRYPTION_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+      FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+      FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+      FEISHU_BITABLE_APP_TOKEN: ${{ secrets.FEISHU_BITABLE_APP_TOKEN }}
+      FEISHU_BITABLE_TABLE_ID: ${{ secrets.FEISHU_BITABLE_TABLE_ID }}
+      DRY_RUN_LIMIT: "3"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Restore n8n state
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.STATE_DIR }}
+          key: n8n-state-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            n8n-state-v2-${{ github.ref_name }}-
+
+      - name: Execute n8n workflow
+        run: |
+          python3 scripts/validate-project.py
+          bash scripts/run-v2.sh "$MODE"
+
+      - name: Save n8n state
+        if: always() && hashFiles('.n8n-state/data/database.sqlite') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.STATE_DIR }}
+          key: n8n-state-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Upload summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: n8n-v2-summary-${{ github.run_id }}
+          path: artifacts/n8n-v2/
+          if-no-files-found: ignore
+          retention-days: 7

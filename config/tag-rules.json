@@ -1,0 +1,34 @@
+[
+  {
+    "label": "DeepSeek",
+    "pattern": "深度求索|幻方量化|梁文锋|DeepSeek"
+  },
+  {
+    "label": "华为",
+    "pattern": "华为|任正非|余承东|鸿蒙|海思|昇腾|HUAWEI|HarmonyOS|HiSilicon"
+  },
+  {
+    "label": "苹果",
+    "pattern": "苹果|iPhone|iOS|Mac|库克|Apple"
+  },
+  {
+    "label": "人工智能",
+    "pattern": "人工智能|大模型|ChatGPT|OpenAI|Claude|Gemini|\\bAI\\b|LLM"
+  },
+  {
+    "label": "特斯拉",
+    "pattern": "特斯拉|Model [3YXS]|马斯克|Tesla"
+  },
+  {
+    "label": "粤语",
+    "pattern": "粤语|广府话|广东话|广州话"
+  },
+  {
+    "label": "英语",
+    "pattern": "英语|English|英文|雅思|托福|口语|翻译|双语"
+  },
+  {
+    "label": "",
+    "pattern": ""
+  }
+]
