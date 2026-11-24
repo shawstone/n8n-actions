@@ -3,57 +3,10 @@
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
-from typing import Any
 
-
-NODE_NAME = "确保已推送记录表"
-
-
-def find_run_data(value: Any) -> dict[str, Any] | None:
-    if isinstance(value, dict):
-        candidate = value.get("runData")
-        if isinstance(candidate, dict):
-            return candidate
-        for child in value.values():
-            found = find_run_data(child)
-            if found is not None:
-                return found
-    elif isinstance(value, list):
-        for child in value:
-            found = find_run_data(child)
-            if found is not None:
-                return found
-    return None
-
-
-def decode_execution(raw: str) -> Any:
-    decoder = json.JSONDecoder()
-    for index, char in enumerate(raw):
-        if char != "{":
-            continue
-        try:
-            value, _ = decoder.raw_decode(raw[index:])
-        except json.JSONDecodeError:
-            continue
-        if isinstance(value, dict) and find_run_data(value) is not None:
-            return value
-    raise ValueError("No executable JSON document was found in bootstrap output")
-
-
-def table_ids(value: Any) -> list[str]:
-    found: list[str] = []
-    if isinstance(value, dict):
-        if value.get("name") == "已推送记录" and isinstance(value.get("id"), str):
-            found.append(value["id"])
-        for child in value.values():
-            found.extend(table_ids(child))
-    elif isinstance(value, list):
-        for child in value:
-            found.extend(table_ids(child))
-    return found
+from n8n_execution import flattened_items, load_execution, resolve_flat
 
 
 def main() -> int:
@@ -61,14 +14,22 @@ def main() -> int:
         print("usage: extract_data_table_id.py <bootstrap-output>", file=sys.stderr)
         return 64
 
-    raw = Path(sys.argv[1]).read_text(encoding="utf-8")
-    execution = decode_execution(raw)
-    run_data = find_run_data(execution)
-    node_runs = (run_data or {}).get(NODE_NAME)
-    if not isinstance(node_runs, list):
-        raise ValueError(f"Bootstrap node did not run: {NODE_NAME}")
-
-    candidates = table_ids(node_runs)
+    execution = load_execution(Path(sys.argv[1]))
+    flat = flattened_items(execution)
+    if flat is None:
+        raise ValueError("Bootstrap response did not contain n8n execution data")
+    candidates: list[str] = []
+    for item in flat:
+        if not (
+            isinstance(item, dict)
+            and "columns" in item
+            and "id" in item
+            and "name" in item
+        ):
+            continue
+        resolved = resolve_flat(item, flat)
+        if isinstance(resolved, dict) and resolved.get("name") == "已推送记录":
+            candidates.append(str(resolved.get("id", "")))
     unique = list(dict.fromkeys(candidates))
     if len(unique) != 1 or len(unique[0]) != 16:
         raise ValueError(f"Expected one 16-character data table ID, got {unique}")

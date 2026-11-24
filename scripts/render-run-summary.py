@@ -9,39 +9,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from n8n_execution import find_run_data, load_execution, node_items
+
 
 FINAL_NODE = "分类排序1"
-
-
-def find_run_data(value: Any) -> dict[str, Any] | None:
-    if isinstance(value, dict):
-        candidate = value.get("runData")
-        if isinstance(candidate, dict):
-            return candidate
-        for child in value.values():
-            found = find_run_data(child)
-            if found is not None:
-                return found
-    elif isinstance(value, list):
-        for child in value:
-            found = find_run_data(child)
-            if found is not None:
-                return found
-    return None
-
-
-def decode_execution(raw: str) -> Any:
-    decoder = json.JSONDecoder()
-    for index, char in enumerate(raw):
-        if char != "{":
-            continue
-        try:
-            value, _ = decoder.raw_decode(raw[index:])
-        except json.JSONDecodeError:
-            continue
-        if isinstance(value, dict) and find_run_data(value) is not None:
-            return value
-    raise ValueError("No executable n8n JSON document was found")
 
 
 def first_value(item: dict[str, Any], *keys: str) -> str:
@@ -59,21 +30,12 @@ def main() -> int:
 
     execution_path = Path(sys.argv[1])
     summary_path = Path(sys.argv[2])
-    execution = decode_execution(
-        execution_path.read_text(encoding="utf-8", errors="replace")
-    )
+    execution = load_execution(execution_path)
     run_data = find_run_data(execution)
     if run_data is None:
         raise ValueError("Execution contains no runData")
 
-    items: list[dict[str, Any]] = []
-    for run in run_data.get(FINAL_NODE, []):
-        branches = (run.get("data") or {}).get("main") or []
-        for branch in branches:
-            for item in branch or []:
-                value = item.get("json") if isinstance(item, dict) and "json" in item else item
-                if isinstance(value, dict):
-                    items.append(value)
+    items = node_items(run_data, FINAL_NODE)
 
     summary = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
