@@ -13,7 +13,7 @@ on:
           - publish
   schedule:
     # 09:00 Asia/Shanghai = 01:00 UTC
-    - cron: "0 1 * * *"
+    - cron: "28 * * * *"
 
 permissions:
   contents: read
