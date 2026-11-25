@@ -125,8 +125,8 @@ PY
 require_value N8N_ENCRYPTION_KEY
 require_value DEEPSEEK_API_KEY
 
-if [[ "$MODE" != "dry-run" && "$MODE" != "publish" ]]; then
-  echo "Mode must be dry-run or publish, got: $MODE" >&2
+if [[ "$MODE" != "dry-run" && "$MODE" != "publish" && "$MODE" != "diagnostic" ]]; then
+  echo "Mode must be dry-run, publish, or diagnostic, got: $MODE" >&2
   exit 64
 fi
 
