@@ -11,6 +11,7 @@ on:
         options:
           - dry-run
           - publish
+          - diagnostic
   schedule:
     # 09:00 Asia/Shanghai = 01:00 UTC
     - cron: "28 * * * *"

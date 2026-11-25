@@ -283,7 +283,11 @@ def main() -> int:
     parser.add_argument("--template", required=True, type=Path)
     parser.add_argument("--config-dir", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--mode", choices=("dry-run", "publish"), default="dry-run")
+    parser.add_argument(
+        "--mode",
+        choices=("dry-run", "publish", "diagnostic"),
+        default="dry-run",
+    )
     args = parser.parse_args()
 
     workflow = copy.deepcopy(load_json(args.template))
@@ -305,6 +309,8 @@ def main() -> int:
             {"HTTP Request7", "飞书多维表格", "已推送记录", "清理旧纪录"},
         )
         add_dry_run_limit(workflow)
+    elif args.mode == "diagnostic":
+        replace_with_noop(workflow, {"HTTP Request7", "飞书多维表格"})
 
     save_json(args.output, workflow)
     print(
