@@ -221,6 +221,88 @@ def disable_bitable_side_branch(workflow: dict[str, Any]) -> None:
     replace_with_noop(workflow, {"飞书多维表格"})
 
 
+def fix_deduplication(workflow: dict[str, Any]) -> None:
+    connections = workflow["connections"]
+
+    http_outputs = connections.get("HTTP Request7", {}).get("main", [])
+    for branch in http_outputs:
+        if isinstance(branch, list):
+            branch[:] = [edge for edge in branch if edge.get("node") != "已推送记录"]
+
+    final_branches = connections["分类排序1"]["main"][0]
+    if not any(edge.get("node") == "已推送记录" for edge in final_branches):
+        final_branches.append(
+            {"node": "已推送记录", "type": "main", "index": 0}
+        )
+
+    history_node = node_by_name(workflow, "已推送记录")
+    history_node["parameters"]["columns"]["value"] = {
+        "link": "={{ $json['链接'] }}",
+        "title": "={{ $json['标题'] }}",
+        "pushed_at": "={{ new Date().toISOString() }}",
+    }
+
+    node_by_name(workflow, "查重")["parameters"]["jsCode"] = r"""// ===== 查重 =====
+// 链接或标题任一命中即算发过；同一批内部也立即去重。
+const 资讯 = $('程序整理AI与热点').all().map(i => i.json);
+
+let 旧记录 = [];
+try {
+  旧记录 = $('读取已推送记录').all().map(i => i.json);
+} catch (e) {
+  旧记录 = [];
+}
+
+function 规范链接(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const u = new URL(raw);
+    for (const key of [...u.searchParams.keys()]) {
+      if (/^(utm_|fbclid$|gclid$|yclid$|spm$)/i.test(key)) {
+        u.searchParams.delete(key);
+      }
+    }
+    u.hash = '';
+    return u.toString();
+  } catch (e) {
+    return raw;
+  }
+}
+
+function 规范标题(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+const 七天前 = Date.now() - 7 * 24 * 60 * 60 * 1000;
+const 有效旧记录 = 旧记录.filter(r => {
+  const t = r.pushed_at ? new Date(r.pushed_at).getTime() : 0;
+  return t >= 七天前;
+});
+
+const 已发链接 = new Set(
+  有效旧记录.map(r => 规范链接(r.link)).filter(Boolean)
+);
+const 已发标题 = new Set(
+  有效旧记录.map(r => 规范标题(r.title)).filter(Boolean)
+);
+
+const 输出 = [];
+for (const n of 资讯) {
+  const link = 规范链接(n['链接']);
+  const title = 规范标题(n['标题']);
+  if ((link && 已发链接.has(link)) || (title && 已发标题.has(title))) {
+    continue;
+  }
+  if (link) 已发链接.add(link);
+  if (title) 已发标题.add(title);
+  输出.push({ json: n });
+}
+
+return 输出;
+"""
+
+
 def add_dry_run_limit(workflow: dict[str, Any]) -> None:
     limit = int(os.getenv("DRY_RUN_LIMIT", "3"))
     workflow["nodes"].append(
@@ -297,6 +379,7 @@ def main() -> int:
     configure_optional_source(workflow, sources)
     patch_prompts_and_tags(workflow, args.config_dir)
     disable_bitable_side_branch(workflow)
+    fix_deduplication(workflow)
 
     data_table_id = os.getenv("DATA_TABLE_ID", "").strip()
     patch_tables(workflow, data_table_id)
