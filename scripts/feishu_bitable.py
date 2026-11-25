@@ -37,8 +37,9 @@ def request_json(
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
+    url = path if path.startswith(("https://", "http://")) else API_BASE + path
     request = urllib.request.Request(
-        API_BASE + path,
+        url,
         data=data,
         headers=headers,
         method=method,
@@ -64,10 +65,14 @@ def request_json(
 def tenant_token(app_id: str, app_secret: str) -> str:
     payload = request_json(
         "POST",
-        "/auth/v3/tenant_access_token/internal",
-        {"app_id": app_id, "app_secret": app_secret},
+        "https://accounts.feishu.cn/oauth/v3/token",
+        {
+            "grant_type": "client_credentials",
+            "client_id": app_id,
+            "client_secret": app_secret,
+        },
     )
-    token = payload.get("tenant_access_token")
+    token = payload.get("access_token") or payload.get("tenant_access_token")
     if not token:
         raise FeishuError("Feishu response did not include tenant_access_token")
     return str(token)
