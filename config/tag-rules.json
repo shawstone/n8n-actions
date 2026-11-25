@@ -9,11 +9,11 @@
   },
   {
     "label": "苹果",
-    "pattern": "苹果|iPhone|iOS|Mac|库克|Apple"
+    "pattern": "苹果|iPhone|\\biOS\\b|\\bMac\\b|库克|Apple"
   },
   {
     "label": "人工智能",
-    "pattern": "人工智能|大模型|ChatGPT|OpenAI|Claude|Gemini|\\bAI\\b|LLM"
+    "pattern": "人工智能|大模型|ChatGPT|OpenAI|Claude|Gemini|\\bAI\\b|\\bLLM\\b"
   },
   {
     "label": "特斯拉",
