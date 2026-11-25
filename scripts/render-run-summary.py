@@ -37,6 +37,8 @@ def main() -> int:
 
     items = node_items(run_data, FINAL_NODE)
     pending_items = node_items(run_data, "待观察占位输出")
+    previous_records = node_items(run_data, "读取已推送记录")
+    written_records = node_items(run_data, "已推送记录")
     webhook_responses = []
     for response in node_items(run_data, "HTTP Request7"):
         selected = {
@@ -63,6 +65,10 @@ def main() -> int:
         "final_node": FINAL_NODE,
         "item_count": len(items),
         "pending_item_count": len(pending_items),
+        "previous_record_count": len(previous_records),
+        "written_record_count": len(written_records),
+        "previous_record_samples": previous_records[:3],
+        "written_record_samples": written_records[:3],
         "feishu_webhook_responses": webhook_responses,
         "node_errors": node_errors,
         "items": [
