@@ -21,6 +21,7 @@ BOOTSTRAP_WORKFLOW="${RUNTIME_DIR}/bootstrap-datatable.json"
 BOOTSTRAP_OUTPUT="${RUNTIME_DIR}/bootstrap-output.json"
 EXECUTION_OUTPUT="${RUNTIME_DIR}/execution-output.json"
 CREDENTIALS_JSON="${RUNTIME_DIR}/credentials.json"
+BITABLE_LOG="${ARTIFACT_DIR}/feishu-bitable.log"
 
 mkdir -p "$DATA_DIR" "$RUNTIME_DIR" "$ARTIFACT_DIR"
 sudo chown --recursive 1000:1000 "$DATA_DIR"
@@ -213,6 +214,7 @@ if [[ "$MODE" == "publish" ]]; then
   require_value FEISHU_BITABLE_APP_TOKEN
   require_value FEISHU_BITABLE_TABLE_ID
 
+  set +e
   python3 scripts/publish_feishu_bitable.py \
     --summary "$ARTIFACT_DIR/run-summary.json" \
     --config config/feishu-bitable.json \
@@ -220,7 +222,14 @@ if [[ "$MODE" == "publish" ]]; then
     --app-secret "$FEISHU_APP_SECRET" \
     --app-token "$FEISHU_BITABLE_APP_TOKEN" \
     --table-id "$FEISHU_BITABLE_TABLE_ID" \
-    --output "$ARTIFACT_DIR/feishu-bitable.json"
+    --output "$ARTIFACT_DIR/feishu-bitable.json" \
+    >"$BITABLE_LOG" 2>&1
+  bitable_status=$?
+  set -e
+  cat "$BITABLE_LOG"
+  if [[ "$bitable_status" -ne 0 ]]; then
+    echo "::warning::Feishu Bitable write failed; group push and Pages deployment will continue."
+  fi
 fi
 
 echo "Workflow execution completed successfully."
