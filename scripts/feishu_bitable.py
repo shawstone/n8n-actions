@@ -49,7 +49,11 @@ def request_json(
             payload = json.loads(response.read())
     except urllib.error.HTTPError as error:
         detail = error.read().decode("utf-8", errors="replace")
-        raise FeishuError(f"Feishu HTTP {error.code}: {detail[:1000]}") from error
+        log_id = error.headers.get("x-tt-logid") or error.headers.get("X-Tt-Logid")
+        suffix = f" log_id={log_id}" if log_id else ""
+        raise FeishuError(
+            f"Feishu HTTP {error.code}{suffix}: {detail[:1000]}"
+        ) from error
     except urllib.error.URLError as error:
         raise FeishuError(f"Feishu network error: {error.reason}") from error
 
