@@ -100,6 +100,26 @@ jobs:
         with:
           path: site
 
+      - name: Wait for GitHub Pages artifact
+        if: env.MODE == 'publish'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for attempt in $(seq 1 24); do
+            response="$(curl --fail --silent --show-error \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?name=github-pages")"
+            if jq -e '.total_count > 0' <<<"$response" >/dev/null; then
+              echo "GitHub Pages artifact is available."
+              exit 0
+            fi
+            echo "Waiting for GitHub Pages artifact, attempt ${attempt}/24..."
+            sleep 5
+          done
+          echo "GitHub Pages artifact did not become available within 120 seconds." >&2
+          exit 1
+
       - name: Deploy GitHub Pages
         if: env.MODE == 'publish'
         id: deployment
