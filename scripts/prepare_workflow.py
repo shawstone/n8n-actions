@@ -210,9 +210,6 @@ for (const feed of feeds) {
           链接: link,
           来源: feed.source,
           板块: feed.board,
-          分类: '全网热点资讯',
-          标签: '热搜',
-          级别: 'G',
         },
       });
     }
@@ -261,16 +258,16 @@ return output;
         "main": [[{"node": merge_node_name, "type": "main", "index": 1}]]
     }
 
-    downstream = workflow["connections"]["Merge5"]["main"][0]
+    downstream = workflow["connections"]["24h内5"]["main"][0]
     downstream[:] = [
-        edge for edge in downstream if edge.get("node") != "程序整理AI与热点"
+        edge for edge in downstream if edge.get("node") != "本地标签筛选"
     ]
     downstream.append(
         {"node": merge_node_name, "type": "main", "index": 0}
     )
 
     workflow["connections"][merge_node_name] = {
-        "main": [[{"node": "程序整理AI与热点", "type": "main", "index": 0}]]
+        "main": [[{"node": "本地标签筛选", "type": "main", "index": 0}]]
     }
 
 def patch_tables(workflow: dict[str, Any], data_table_id: str) -> None:
