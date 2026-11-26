@@ -14,7 +14,8 @@ from typing import Any
 DEEPSEEK_CREDENTIAL_ID = "xvaefodMzAZCsD3v"
 DRY_RUN_LIMIT_NODE_ID = "f425620f-4c52-4f13-93b6-8b41a17d7afb"
 EXTRA_FEED_INPUT_NODE_ID = "e9606b82-9f29-4d5c-b7a8-5ef62415a4c8"
-
+NEWSNOW_NODE_ID = "ca6b0f55-836a-4f3e-bbb9-0bdb6b8f4d22"
+NEWSNOW_MERGE_NODE_ID = "b5e11ea7-bdb1-4bd5-bdbe-bb2d2b7f55a8"
 
 def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -169,6 +170,108 @@ def configure_optional_source(workflow: dict[str, Any], sources: dict[str, Any])
     workflow["connections"].pop("补充源 RSS", None)
     workflow["connections"].pop("补充源字段", None)
 
+def configure_newsnow_sources(workflow: dict[str, Any]) -> None:
+    source_node_name = "NewsNow 热搜"
+    merge_node_name = "MergeNewsNow"
+
+    js_code = r"""// 拉取 NewsNow 公开 JSON，并转换成现有资讯字段
+const feeds = [
+  { id: 'douyin',   source: '抖音热搜', board: '社交媒体' },
+  { id: 'baidu',    source: '百度热搜', board: '新闻媒体' },
+  { id: 'bilibili', source: 'B站热搜', board: '社交媒体' },
+];
+
+const output = [];
+const errors = [];
+
+for (const feed of feeds) {
+  try {
+    const data = await this.helpers.httpRequest({
+      method: 'GET',
+      url: `https://newsnow.busiyi.world/api/s?id=${encodeURIComponent(feed.id)}`,
+      json: true,
+      timeout: 20000,
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+
+    const items = Array.isArray(data?.items) ? data.items : [];
+
+    // 每个平台只取前 10 条，避免一次推送太多
+    for (const item of items.slice(0, 10)) {
+      const title = String(item?.title || '').trim();
+      const link = String(item?.url || '').trim();
+      if (!title || !link) continue;
+
+      output.push({
+        json: {
+          标题: title,
+          内容: String(item?.extra?.hover || '').trim(),
+          日期: new Date().toISOString(),
+          链接: link,
+          来源: feed.source,
+          板块: feed.board,
+          分类: '全网热点资讯',
+          标签: '热搜',
+          级别: 'G',
+        },
+      });
+    }
+  } catch (error) {
+    errors.push(`${feed.source}: ${error?.message || error}`);
+  }
+}
+
+if (errors.length) console.warn(errors.join('\n'));
+return output;
+"""
+
+    workflow["nodes"].append(
+        {
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": js_code,
+            },
+            "id": NEWSNOW_NODE_ID,
+            "name": source_node_name,
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [320, 1880],
+        }
+    )
+
+    workflow["nodes"].append(
+        {
+            "parameters": {
+                "mode": "append",
+                "numberInputs": 2,
+            },
+            "id": NEWSNOW_MERGE_NODE_ID,
+            "name": merge_node_name,
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3.2,
+            "position": [560, 1880],
+        }
+    )
+
+    workflow["connections"]["Schedule Trigger"]["main"][0].append(
+        {"node": source_node_name, "type": "main", "index": 0}
+    )
+
+    workflow["connections"][source_node_name] = {
+        "main": [[{"node": merge_node_name, "type": "main", "index": 1}]]
+    }
+
+    downstream = workflow["connections"]["Merge5"]["main"][0]
+    downstream[:] = [
+        edge for edge in downstream if edge.get("node") != "程序整理AI与热点"
+    ]
+    downstream.append(
+        {"node": merge_node_name, "type": "main", "index": 0}
+    )
+
+    workflow["connections"][merge_node_name] = {
+        "main": [[{"node": "程序整理AI与热点", "type": "main", "index": 0}]]
+    }
 
 def patch_tables(workflow: dict[str, Any], data_table_id: str) -> None:
     if not data_table_id:
@@ -377,6 +480,7 @@ def main() -> int:
 
     patch_sources(workflow, sources)
     configure_optional_source(workflow, sources)
+    configure_newsnow_sources(workflow)
     patch_prompts_and_tags(workflow, args.config_dir)
     disable_bitable_side_branch(workflow)
     fix_deduplication(workflow)
