@@ -178,7 +178,12 @@ def configure_newsnow_sources(workflow: dict[str, Any]) -> None:
 const feeds = [
   { id: 'douyin',   source: '抖音热搜', board: '社交媒体' },
   { id: 'baidu',    source: '百度热搜', board: '新闻媒体' },
-  { id: 'bilibili', source: 'B站热搜', board: '社交媒体' },
+  { id: 'bilibili',  source: 'B站热搜', board: '社交媒体' },
+  { id: 'weibo',    source: '微博热搜', board: '社交媒体' },
+  { id: 'zhihu',    source: '知乎热榜', board: '社交媒体' },
+  { id: 'toutiao',  source: '今日头条', board: '新闻媒体' },
+  { id: 'tieba',    source: '贴吧热议', board: '社交媒体' },
+  { id: 'hupu',     source: '虎扑热帖', board: '社交媒体' },
 ];
 
 const output = [];
