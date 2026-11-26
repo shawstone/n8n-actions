@@ -290,6 +290,16 @@ def patch_tables(workflow: dict[str, Any], data_table_id: str) -> None:
 
 
 def patch_credentials_and_secrets(workflow: dict[str, Any], publish: bool) -> None:
+    for node_name in (
+        "DeepSeek Chat Model 分类",
+        "DeepSeek Chat Model 深度解析",
+    ):
+        node_by_name(workflow, node_name)["credentials"] = {
+            "deepSeekApi": {
+                "id": DEEPSEEK_CREDENTIAL_ID,
+                "name": "DeepSeek account",
+            }
+        }    
     webhook_url = os.getenv("FEISHU_WEBHOOK_URL", "").strip()
     if webhook_url:
         node_by_name(workflow, "HTTP Request7")["parameters"]["url"] = webhook_url
